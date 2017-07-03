@@ -3,7 +3,14 @@
 
     const express = require('express');
     const router = express.Router();
+    const path = require('path');
     const messages = require('./database.js').messages;
+
+    router.get('/view/:id', (req, res) => {
+        messages.findById(req.params.id, m => {
+            res.json({ message: m });
+        });
+    });
 
     router.post('/', (req, res) => {
         messages.insert({
@@ -12,15 +19,12 @@
             accesses: 0,
             maxAccesses: req.body.maxAccesses || 1
         }, id => {
-            res.send(`${id}`);
+            res.json({ id: id });
         });
     });
 
-    router.get('/:id', (req, res) => {
-        console.log(req.params.id);
-        messages.findById(req.params.id, m => {
-            res.send(m ? `<p>${m}</p>` : "<p>That message doesn't exist.</p>");
-        });
+    router.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, './client/build', 'index.html'));
     });
 
     module.exports.router = router;

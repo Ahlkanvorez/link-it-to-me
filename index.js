@@ -20,10 +20,10 @@
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
 
+    app.use('/', router);
+
     // Files for the compiled React app.
     app.use(express.static(path.join(__dirname, 'client/build')));
-
-    app.use(router);
 
     const port = 3001;
     console.log(`Listening on port ${port}`);

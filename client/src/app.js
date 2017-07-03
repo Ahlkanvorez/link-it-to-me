@@ -6,7 +6,8 @@ class App extends React.Component {
         this.state = {
             content: '',
             expires: new Date(),
-            maxAccesses: 1
+            maxAccesses: 1,
+            id: undefined
         };
 
         this.handleMaxAccessesChange = this.handleMaxAccessesChange.bind(this);
@@ -16,15 +17,15 @@ class App extends React.Component {
     }
 
     handleContentChange (event) {
-        this.setState({ content: event.target.value });
+        this.setState({ content: event.target.value, id: undefined });
     }
 
     handleExpiresChange (event) {
-        this.setState({ expires: event.target.value});
+        this.setState({ expires: event.target.value, id: undefined });
     }
 
     handleMaxAccessesChange (event) {
-        this.setState({ maxAccesses: event.target.value});
+        this.setState({ maxAccesses: event.target.value, id: undefined });
     }
 
     handleSubmit (event) {
@@ -32,6 +33,16 @@ class App extends React.Component {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:3001/', true); // true = use async
         xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                const res = JSON.parse(xhr.response);
+                if (res.id) {
+                    this.setState({ id: res.id });
+                } else {
+                    this.setState({ id: undefined });
+                }
+            }
+        };
         xhr.send(JSON.stringify(this.state));
 
         event.preventDefault();
@@ -63,6 +74,13 @@ class App extends React.Component {
 
                 </fieldset>
                 <input type="submit" value="submit" />
+                { this.state.id ? (
+                    <p>
+                        The following link will take you to your secret communique, but be careful! If you cause it to
+                        self-destruct before your intended recipient can see it, you'll have to make another!
+                        <a href={`/view/${this.state.id}`}>{this.state.id}</a>
+                    </p>
+                ) : null}
             </form>
         );
     }
