@@ -1,0 +1,14 @@
+{
+  "name": "link-it-to-me",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Robert Mitchell <robert.mitchell36@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.1.1",
+    "eslint-config-google": "^0.8.0"
+  }
+}
