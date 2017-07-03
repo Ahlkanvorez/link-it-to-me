@@ -1,0 +1,15 @@
+{
+  "name": "link-it-to-me-site",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "scripts": {
+    "build": "react-scripts build"
+  },
+  "devDependencies": {
+    "react-scripts": "^1.0.10"
+  }
+}
