@@ -7,7 +7,8 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "mongodb": "^2.2.29"
+    "mongodb": "^2.2.29",
+    "mongoose": "^4.11.1"
   },
   "devDependencies": {
     "eslint": "^4.1.1",
