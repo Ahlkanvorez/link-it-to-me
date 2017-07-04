@@ -12,7 +12,11 @@ const Message = props => (
         <tbody>
         <tr>
             <td className="text-right">Content: </td>
-            <td><a href={`/view/${props.value._id}`}>{ props.value.content }</a></td>
+            <td>{ props.value.content }</td>
+        </tr>
+        <tr>
+            <td className="text-right">Link: </td>
+            <td><a href={`/view/${props.value._id}`}>Secure link</a></td>
         </tr>
         <tr>
             <td className="text-right">Self-destructs on: </td>
@@ -160,7 +164,7 @@ const Navbar = props => (
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav">
                     <li>
-                        <a href="/logout">
+                        <a href={`${baseUrl}/auth/logout`}>
                             Logout
                         </a>
                     </li>
