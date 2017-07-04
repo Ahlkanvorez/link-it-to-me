@@ -179,7 +179,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             username: 'Anonymous',
-            messages: [{ content: 'eawe', _id: 3412341234 }]
+            messages: []
         };
 
         this.updateMessages = this.updateMessages.bind(this);
