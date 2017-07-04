@@ -1,13 +1,48 @@
 import React from 'react';
+import axios from 'axios';
+import DateTime from 'react-datetime';
+import './react-datetime.css'
 
-class App extends React.Component {
+const baseUrl = 'http://localhost:3001';
+const http = axios.create({ baseURL: baseUrl });
+
+const UserInfo = props => (
+    <div style={props.style}>
+        <span style={{ marginRight: '4em' }}>{props.username}</span>
+        <a href={`${baseUrl}/logout`}>Logout</a>
+    </div>
+);
+
+const MessageList = props => (
+    <div style={props.style}>
+        {
+            (props.messages && props.messages.length > 0)
+                ? (
+                    <div>
+                        <h3>Your Messages</h3>
+                        <ul>
+                            {
+                                props.messages.map(m => (
+                                    <li key={ m._id }>
+                                        <a href={`/view/${m._id}`}>{ m.content }</a>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    </div>)
+                : null
+        }
+    </div>
+);
+
+class MessageForm extends React.Component {
     constructor (props) {
         super(props);
+
         this.state = {
             content: '',
             expires: new Date(),
-            maxAccesses: 1,
-            id: undefined
+            maxAccesses: '1' // NOTE: The value of an <input type="number" /> is a string!
         };
 
         this.handleMaxAccessesChange = this.handleMaxAccessesChange.bind(this);
@@ -20,8 +55,8 @@ class App extends React.Component {
         this.setState({ content: event.target.value, id: undefined });
     }
 
-    handleExpiresChange (event) {
-        this.setState({ expires: event.target.value, id: undefined });
+    handleExpiresChange (moment) {
+        this.setState({ expires: moment._d, id: undefined });
     }
 
     handleMaxAccessesChange (event) {
@@ -29,59 +64,100 @@ class App extends React.Component {
     }
 
     handleSubmit (event) {
-        // Send a post request to the server asynchronously.
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:3001/', true); // true = use async
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                const res = JSON.parse(xhr.response);
-                if (res.id) {
-                    this.setState({ id: res.id });
-                } else {
-                    this.setState({ id: undefined });
-                }
-            }
-        };
-        xhr.send(JSON.stringify(this.state));
+        http.post('/', {
+            content: this.state.content,
+            expires: this.state.expires,
+            maxAccesses: this.state.maxAccesses
+        }).then(res => {
+            this.setState({ id: res.id });
+        }).catch(err => {
+            console.log(err);
+        });
 
+        this.props.onSubmit();
         event.preventDefault();
     }
 
     render () {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit}  style={this.props.style}>
                 <fieldset>
-                    <legend>Secure communique:</legend>
-                    <textarea value={this.state.content} onChange={this.handleContentChange} placeholder="Secure message" />
+                    <legend>Secure communique</legend>
+                    <textarea value={this.state.content}
+                              style={{ width: '100%' }}
+                              onChange={this.handleContentChange}
+                              placeholder="Secure message" />
                     <br />
                     <label>
-                        Self-destruct on:
+                        Self-destruct on
                     </label>
-                    <input type="date"
-                           value={this.state.expires}
-                           onChange={this.handleExpiresChange} />
-
-                    <br />
+                    <span style={{ display: 'inline-block', marginLeft: '0.5em', marginRight: '0.5em' }}>
+                        <DateTime value={this.state.expires}
+                                  onChange={this.handleExpiresChange}
+                                  isValidDate={date => date.isAfter(new Date())} />
+                    </span>
                     <label>
-                        Number of accesses before self-destruct:
+                        or after
+                        <input type="number"
+                               min="1"
+                               style={{ width: '4em', marginLeft: '0.5em', marginRight: '0.5em' }}
+                               value={this.state.maxAccesses}
+                               onChange={this.handleMaxAccessesChange} />
+                        {   // Use the appropriately numbered noun for the selected value.
+                            this.state.maxAccesses === '1'
+                                ? 'access'
+                                : 'accesses'
+                        }.
                     </label>
-                    <input type="number"
-                           min="1"
-                           style={{ width: '4em' }}
-                           value={this.state.maxAccesses}
-                           onChange={this.handleMaxAccessesChange} />
-
                 </fieldset>
                 <input type="submit" value="submit" />
                 { this.state.id ? (
-                    <p>
+                    <p style={{ display: 'table', margin: '0 auto' }}>
                         The following link will take you to your secret communique, but be careful! If you cause it to
                         self-destruct before your intended recipient can see it, you'll have to make another!
                         <a href={`/view/${this.state.id}`}>{this.state.id}</a>
                     </p>
                 ) : null}
             </form>
+        );
+    }
+}
+
+class App extends React.Component {
+    constructor (props) {
+        super(props);
+        this.state = {
+            username: 'Anonymous',
+            messages: []
+        };
+
+        this.updateMessages = this.updateMessages.bind(this);
+        this.updateMessages();
+    }
+
+    updateMessages () {
+        http.get('/messages').then(res => {
+            if (res) {
+                this.setState({
+                    username: res.data.username || 'Anonymous',
+                    messages: res.data.messages || []
+                });
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    render () {
+        return (
+            <div>
+                <UserInfo username={this.state.username}
+                          style={{ display: 'table', margin: '0 auto' }} />
+                <MessageForm style={{ display: 'table', margin: '0 auto' }}
+                             onSubmit={this.updateMessages} />
+                <MessageList messages={this.state.messages}
+                             style={{ display: 'table', margin: '0 auto' }} />
+            </div>
         );
     }
 }

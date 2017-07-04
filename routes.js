@@ -58,8 +58,11 @@
 
     router.get('/messages', authRequired, addTemplateVariables, (req, res) => {
         messages.findByCreatorId(req.user.id, messages => {
-            console.log(messages);
-            res.json(messages);
+            console.log(req.user);
+            res.json({
+                username: req.user.displayName,
+                messages: messages
+            });
         });
     });
 
