@@ -8,7 +8,9 @@
         content: String,
         expires: Date,
         accesses: Number,
-        maxAccesses: Number
+        maxAccesses: Number,
+        creatorName: String,
+        creatorId: Number
     });
 
     const Message = mongoose.model('Message', messageSchema);
@@ -18,6 +20,15 @@
         const isExpired = m => (m.expires <= new Date() || m.accesses >= m.maxAccesses);
 
         return {
+            findByCreatorId: (id, callback) => {
+                Message.find({ creatorId: id }, (err, messages) => {
+                    if (err) {
+                        console.log(err);
+                        callback();
+                    }
+                    callback(messages);
+                });
+            },
             findById: (id, callback) => {
                 Message.findById(id, (err, message) => {
                     if (err) {
