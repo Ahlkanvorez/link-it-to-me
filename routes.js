@@ -52,7 +52,7 @@
     // TODO: consider requiring authentication to view a link.
     router.get('/view/:id', (req, res) => {
         messages.findById(req.params.id, m => {
-            res.json({ message: m });
+            res.render('message', { message: m.content, user: m.creatorName });
         });
     });
 
@@ -79,7 +79,10 @@
             creatorName: req.user.displayName || 'Anonymous',
             creatorId: req.user.id
         }, id => {
-            res.json({ id: id });
+            res.json({
+                id: id,
+                content: req.body.content
+            });
         });
     });
 

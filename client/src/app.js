@@ -1,30 +1,43 @@
 import React from 'react';
 import axios from 'axios';
 import DateTime from 'react-datetime';
+import moment from 'moment';
 import './react-datetime.css'
 
 const baseUrl = 'http://localhost:3001';
 const http = axios.create({ baseURL: baseUrl });
 
-const UserInfo = props => (
-    <div style={props.style}>
-        <span style={{ marginRight: '4em' }}>{props.username}</span>
-        <a href={`${baseUrl}/logout`}>Logout</a>
-    </div>
+const Message = props => (
+    <table className="table">
+        <tbody>
+        <tr>
+            <td className="text-right">Content: </td>
+            <td><a href={`/view/${props.value._id}`}>{ props.value.content }</a></td>
+        </tr>
+        <tr>
+            <td className="text-right">Self-destructs on: </td>
+            <td>{ moment(props.value.expires).format("dddd, MMMM Do YYYY, h:mm:ss a") }</td>
+        </tr>
+        <tr>
+            <td className="text-right">Views remaining: </td>
+            <td>{ props.value.maxAccesses - props.value.accesses }</td>
+        </tr>
+        </tbody>
+    </table>
 );
 
 const MessageList = props => (
-    <div style={props.style}>
+    <div className={props.className} style={{ display: 'table', margin: '0 auto' }}>
         {
             (props.messages && props.messages.length > 0)
                 ? (
                     <div>
                         <h3>Your Messages</h3>
-                        <ul>
+                        <ul style={{ listStyleType: 'none' }}>
                             {
                                 props.messages.map(m => (
                                     <li key={ m._id }>
-                                        <a href={`/view/${m._id}`}>{ m.content }</a>
+                                        <Message value={m} />
                                     </li>
                                 ))
                             }
@@ -39,9 +52,11 @@ class MessageForm extends React.Component {
     constructor (props) {
         super(props);
 
+        let date = new Date();
+        date.setDate(date.getDate() + 1);
         this.state = {
             content: '',
-            expires: new Date(),
+            expires: date,
             maxAccesses: '1' // NOTE: The value of an <input type="number" /> is a string!
         };
 
@@ -69,7 +84,11 @@ class MessageForm extends React.Component {
             expires: this.state.expires,
             maxAccesses: this.state.maxAccesses
         }).then(res => {
-            this.setState({ id: res.id });
+            console.log(res);
+            this.setState({
+                id: res.data.id,
+                messageContent: res.data.content
+            });
         }).catch(err => {
             console.log(err);
         });
@@ -80,55 +99,83 @@ class MessageForm extends React.Component {
 
     render () {
         return (
-            <form onSubmit={this.handleSubmit}  style={this.props.style}>
-                <fieldset>
-                    <legend>Secure communique</legend>
-                    <textarea value={this.state.content}
-                              style={{ width: '100%' }}
-                              onChange={this.handleContentChange}
-                              placeholder="Secure message" />
-                    <br />
-                    <label>
-                        Self-destruct on
-                    </label>
-                    <span style={{ display: 'inline-block', marginLeft: '0.5em', marginRight: '0.5em' }}>
-                        <DateTime value={this.state.expires}
-                                  onChange={this.handleExpiresChange}
-                                  isValidDate={date => date.isAfter(new Date())} />
-                    </span>
-                    <label>
-                        or after
-                        <input type="number"
-                               min="1"
-                               style={{ width: '4em', marginLeft: '0.5em', marginRight: '0.5em' }}
-                               value={this.state.maxAccesses}
-                               onChange={this.handleMaxAccessesChange} />
-                        {   // Use the appropriately numbered noun for the selected value.
-                            this.state.maxAccesses === '1'
-                                ? 'access'
-                                : 'accesses'
-                        }.
-                    </label>
-                </fieldset>
-                <input type="submit" value="submit" />
+            <div className={this.props.className}>
+                <form onSubmit={this.handleSubmit} style={{ display: 'table', margin: '0 auto' }}>
+                    <fieldset>
+                        <legend>Make a link</legend>
+                        <textarea value={this.state.content}
+                                  style={{ width: '100%' }}
+                                  onChange={this.handleContentChange}
+                                  placeholder="Secure message" />
+                        <br />
+                        <label>
+                            Self-destruct on
+                        </label>
+                        <span style={{ display: 'inline-block', marginLeft: '0.5em', marginRight: '0.5em' }}>
+                            <DateTime value={this.state.expires}
+                                      onChange={this.handleExpiresChange}
+                                      isValidDate={date => date.isAfter(new Date())} />
+                        </span>
+                        <label>
+                            or after
+                            <input type="number"
+                                   min="1"
+                                   style={{ width: '4em', marginLeft: '0.5em', marginRight: '0.5em' }}
+                                   value={this.state.maxAccesses}
+                                   onChange={this.handleMaxAccessesChange} />
+                            {   // Use the appropriately numbered noun for the selected value.
+                                this.state.maxAccesses === '1'
+                                    ? 'access'
+                                    : 'accesses'
+                            }.
+                        </label>
+                    </fieldset>
+                    <input type="submit" value="submit" />
+                </form>
                 { this.state.id ? (
-                    <p style={{ display: 'table', margin: '0 auto' }}>
-                        The following link will take you to your secret communique, but be careful! If you cause it to
-                        self-destruct before your intended recipient can see it, you'll have to make another!
-                        <a href={`/view/${this.state.id}`}>{this.state.id}</a>
-                    </p>
+                    <div style={{ display: 'table', margin: '0 auto', paddingTop: '30px' }}>
+                        <p>
+                            <a href={`/view/${this.state.id}`}>This link</a> will take you to your secret message, but
+                            be careful! If you cause it to self-destruct before your intended recipient can see it,
+                            you'll have to make another!
+                        </p>
+                        <blockquote>
+                            {this.state.messageContent}
+                        </blockquote>
+                    </div>
                 ) : null}
-            </form>
+            </div>
         );
     }
 }
+
+const Navbar = props => (
+    <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div className="container">
+            <div className="navbar-header">
+                <a className="navbar-brand">
+                    {props.username}
+                </a>
+            </div>
+            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul className="nav navbar-nav">
+                    <li>
+                        <a href="/logout">
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
 
 class App extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             username: 'Anonymous',
-            messages: []
+            messages: [{ content: 'eawe', _id: 3412341234 }]
         };
 
         this.updateMessages = this.updateMessages.bind(this);
@@ -150,13 +197,15 @@ class App extends React.Component {
 
     render () {
         return (
-            <div>
-                <UserInfo username={this.state.username}
-                          style={{ display: 'table', margin: '0 auto' }} />
-                <MessageForm style={{ display: 'table', margin: '0 auto' }}
-                             onSubmit={this.updateMessages} />
-                <MessageList messages={this.state.messages}
-                             style={{ display: 'table', margin: '0 auto' }} />
+            <div className="container">
+                <div className="row"
+                     style={{ display: 'table', margin: '0 auto' }}>
+                    <Navbar username={this.state.username} />
+                </div>
+                <div className="row" style={{ marginTop: '60px' }}>
+                    <MessageForm className="col-lg-6" onSubmit={this.updateMessages} />
+                    <MessageList className="col-lg-6" messages={this.state.messages} />
+                </div>
             </div>
         );
     }
