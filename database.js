@@ -26,7 +26,16 @@
                         console.log(err);
                         callback();
                     }
-                    callback(messages);
+                    messages.map(m => {
+                        if (isExpired(m)) {
+                            Message.remove({ _id: m._id }, err => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            });
+                        }
+                    });
+                    callback(messages.filter(m => !isExpired(m)));
                 });
             },
             findById: (id, callback) => {
@@ -49,7 +58,7 @@
                             if (err) {
                                 console.log(err);
                             }
-                            callback(message.content);
+                            callback(message);
                         });
                     }
                 });

@@ -39,7 +39,7 @@
     }, passport.authenticate('google', { scope: ['email', 'profile'] }));
 
     router.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
-        const origin = req.session.oauth2return || '/';
+        const origin = req.session.oauth2return || '/admin';
         delete req.session.oauth2return;
         res.redirect(origin);
     });
@@ -52,13 +52,19 @@
     // TODO: consider requiring authentication to view a link.
     router.get('/view/:id', (req, res) => {
         messages.findById(req.params.id, m => {
-            res.render('message', { message: m.content, user: m.creatorName });
+            if (!m || !m.content || !m.creatorName) {
+                res.redirect(req.user ? '/admin' : '/');
+            } else {
+                res.render('message', {
+                    content: m.content,
+                    creator: m.creatorName
+                });
+            }
         });
     });
 
     router.get('/messages', authRequired, addTemplateVariables, (req, res) => {
         messages.findByCreatorId(req.user.id, messages => {
-            console.log(req.user);
             res.json({
                 username: req.user.displayName,
                 messages: messages
@@ -66,7 +72,11 @@
         });
     });
 
-    router.get('/', authRequired, addTemplateVariables, (req, res) => {
+    router.get('/', (req, res) => {
+        res.render('index');
+    });
+
+    router.get('/admin', authRequired, addTemplateVariables, (req, res) => {
         res.sendFile(path.join(__dirname, '/client/build/', 'index.html'));
     });
 

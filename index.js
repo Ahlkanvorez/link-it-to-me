@@ -65,6 +65,7 @@
         secret: conf['session-secret'],
         signed: true
     }));
+    app.set('view engine', 'pug');
     app.set('trust proxy', true);
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
