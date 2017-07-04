@@ -9,14 +9,18 @@
 
     const app = express();
 
+
+    // For a good tutorial on passport.js, see:
+    // - https://cloud.google.com/nodejs/getting-started/authenticate-users
+    // Note: the above tutorial does not make it clear that this authentication method requires both the
+    // Google+ Api and the Contacts Api be enabled.
+
     const passport = require('passport');
     const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
     // Synchronously load client id & secret from conf.json, to preserve order of initialization.
     const conf = JSON.parse(require('fs').readFileSync('conf.json'));
 
-    // For a good tutorial on passport.js, see:
-    // - https://cloud.google.com/nodejs/getting-started/authenticate-users
     const extractProfile = profile => {
         let imageUrl = '';
         if (profile.photos && profile.photos.length) {
@@ -55,8 +59,6 @@
         next();
     });
 
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'pug');
     app.use(session({
         resave: false,
         saveUninitialized: false,
@@ -70,6 +72,9 @@
     app.use(passport.session());
     app.use('/', router);
 
+    // Files for the compiled React app.
+    app.use(express.static(path.join(__dirname, '/client/build')));
+
     // Basic 404 handler
     app.use((req, res) => {
         res.status(404).send('Not Found');
@@ -82,9 +87,6 @@
         // send a generic message so as not to leak anything.
         res.status(500).send(err.response || 'Something broke!');
     });
-
-    // Files for the compiled React app.
-    app.use(express.static(path.join(__dirname, 'client/build')));
 
     const port = 3001;
     console.log(`Listening on port ${port}`);

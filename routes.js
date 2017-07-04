@@ -56,10 +56,15 @@
         });
     });
 
-    router.get('/', authRequired, addTemplateVariables, (req, res) => {
+    router.get('/messages', authRequired, addTemplateVariables, (req, res) => {
         messages.findByCreatorId(req.user.id, messages => {
-            res.sendFile(path.join(__dirname, '/client/build', 'index.html'));
+            console.log(messages);
+            res.json(messages);
         });
+    });
+
+    router.get('/', authRequired, addTemplateVariables, (req, res) => {
+        res.sendFile(path.join(__dirname, '/client/build/', 'index.html'));
     });
 
     router.post('/', authRequired, (req, res) => {
