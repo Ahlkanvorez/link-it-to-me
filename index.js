@@ -51,7 +51,7 @@
     });
 
     const mongoose = require('mongoose');
-    const mongoUri = 'mongodb://localhost:27017/link_it_to_me';
+    const mongoUri = conf['mongo-uri'];
     mongoose.connect(mongoUri);
 
     app.use((req, res, next) => {
