@@ -9,6 +9,7 @@
     "eslint-plugin-must-use-await": "^1.0.1",
     "express": "^4.15.3",
     "express-session": "^1.15.3",
+    "helmet": "^3.6.1",
     "mongodb": "^2.2.29",
     "mongoose": "^4.11.1",
     "passport": "^0.3.2",

@@ -9,6 +9,7 @@
 
     const app = express();
 
+    app.use(require('helmet')());
 
     // For a good tutorial on passport.js, see:
     // - https://cloud.google.com/nodejs/getting-started/authenticate-users
