@@ -53,12 +53,10 @@
     router.get('/view/:id', (req, res) => {
         const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         console.log(userIp);
-        messages.findById(req.params.id, m => {
+        messages.findById(req.params.id, userIp, m => {
             if (!m || !m.content) {
                 res.redirect(req.user ? '/admin' : '/');
-            } else if (m.ipWhitelist && m.ipWhitelist.length > 0 && !m.ipWhitelist.find(ip => ip === userIp)) {
-                // If there is a non-empty whitelist, and the user requesting to view the message is not on it, redirect
-                // them to a page telling them they lack access.
+            } else if (m === 'forbidden') {
                 res.render('forbidden');
             } else {
                 res.render('message', {

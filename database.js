@@ -39,7 +39,7 @@
                     callback(messages.filter(m => !isExpired(m)));
                 });
             },
-            findById: (id, callback) => {
+            findById: (id, userIp, callback) => {
                 Message.findById(id, (err, message) => {
                     if (err) {
                         console.log(err);
@@ -54,13 +54,19 @@
                         });
                         callback();
                     } else {
-                        message.accesses += 1;
-                        message.save(err => {
-                            if (err) {
-                                console.log(err);
-                            }
-                            callback(message);
-                        });
+                        if (message.ipWhitelist && message.ipWhitelist.length > 0 && !message.ipWhitelist.find(ip => ip === userIp)) {
+                            // If there is a non-empty whitelist, and the user requesting to view the message is not on
+                            // it, indicate they are forbidden from viewing it.
+                            callback('forbidden');
+                        } else {
+                            message.accesses += 1;
+                            message.save(err => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                callback(message);
+                            });
+                        }
                     }
                 });
             },
