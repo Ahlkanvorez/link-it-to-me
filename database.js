@@ -10,7 +10,8 @@
         accesses: Number,
         maxAccesses: Number,
         creatorName: String,
-        creatorId: Number
+        creatorId: Number,
+        ipWhitelist: [String]
     });
 
     const Message = mongoose.model('Message', messageSchema);
@@ -79,5 +80,4 @@
             }
         };
     })();
-
 })();

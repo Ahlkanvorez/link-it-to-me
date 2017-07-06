@@ -51,13 +51,19 @@
 
     // TODO: consider requiring authentication to view a link.
     router.get('/view/:id', (req, res) => {
+        const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        console.log(userIp);
         messages.findById(req.params.id, m => {
-            if (!m || !m.content || !m.creatorName) {
+            if (!m || !m.content) {
                 res.redirect(req.user ? '/admin' : '/');
+            } else if (m.ipWhitelist && m.ipWhitelist.length > 0 && !m.ipWhitelist.find(ip => ip === userIp)) {
+                // If there is a non-empty whitelist, and the user requesting to view the message is not on it, redirect
+                // them to a page telling them they lack access.
+                res.render('forbidden');
             } else {
                 res.render('message', {
                     content: m.content,
-                    creator: m.creatorName
+                    creator: m.creatorName || 'Anonymous'
                 });
             }
         });
@@ -87,7 +93,8 @@
             accesses: 0,
             maxAccesses: req.body.maxAccesses || 1,
             creatorName: req.user.displayName || 'Anonymous',
-            creatorId: req.user.id
+            creatorId: req.user.id,
+            ipWhitelist: req.body.ipWhitelist || []
         }, id => {
             res.json({
                 id: id,
