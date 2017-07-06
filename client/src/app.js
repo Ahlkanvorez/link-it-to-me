@@ -112,7 +112,7 @@ class EditableList extends React.Component {
                 <tbody>
                 {   // Display each of the messages
                     this.props.elements.map((e, index) => (
-                        <RemovableListInput key={`${index}${e}`} value={e} onDelete={this.onDelete} onChange={this.onChange} />
+                        <RemovableListInput key={index} value={e} onDelete={this.onDelete} onChange={this.onChange} />
                     ))
                 }
                 </tbody>
