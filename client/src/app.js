@@ -52,6 +52,75 @@ const MessageList = props => (
     </div>
 );
 
+class RemovableListInput extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.onInputChange = this.onInputChange.bind(this);
+    }
+
+    onInputChange (event) {
+        this.props.onChange(this.props.value, event.target.value);
+    }
+
+    render () {
+        return (
+            <tr>
+                <td>
+                    <input type="text" className="form-control" value={this.props.value} onChange={this.onInputChange} />
+                </td>
+                <td>
+                    <button className="btn btn-default" style={{ width: '100%' }} type="button" onClick={() => this.props.onDelete(this.props.value)}>Delete</button>
+                </td>
+            </tr>
+        );
+    }
+}
+
+class EditableList extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.onChange = this.onChange.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+        this.addItem = this.addItem.bind(this);
+    }
+
+    onDelete  (e) {
+        this.props.onChange(this.props.elements.filter(x => x !== e));
+    }
+
+    onChange (oldElement, newElement) {
+        this.props.onChange(this.props.elements.map(x => x === oldElement ? newElement : x));
+    }
+
+    addItem () {
+        this.props.onChange(this.props.elements.concat(''));
+    }
+
+    render () {
+        return (
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>{this.props.elements.length === 0 ? 'Publicly Viewable' : 'Whitelisted IP Addresses'}</th>
+                        <th>
+                            <button className="btn btn-default" style={{ width: '100%' }} type="button" onClick={this.addItem}>Whitelist an IP</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {   // Display each of the messages
+                    this.props.elements.map((e, index) => (
+                        <RemovableListInput key={`${index}${e}`} value={e} onDelete={this.onDelete} onChange={this.onChange} />
+                    ))
+                }
+                </tbody>
+            </table>
+        );
+    }
+}
+
 class MessageForm extends React.Component {
     constructor (props) {
         super(props);
@@ -61,13 +130,19 @@ class MessageForm extends React.Component {
         this.state = {
             content: '',
             expires: date,
-            maxAccesses: '1' // NOTE: The value of an <input type="number" /> is a string!
+            maxAccesses: '1', // NOTE: The value of an <input type="number" /> is a string!
+            ipWhitelist: []
         };
 
         this.handleMaxAccessesChange = this.handleMaxAccessesChange.bind(this);
         this.handleExpiresChange = this.handleExpiresChange.bind(this);
         this.handleContentChange = this.handleContentChange.bind(this);
+        this.handleIpWhitelistChange = this.handleIpWhitelistChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleIpWhitelistChange (ips) {
+        this.setState({ ipWhitelist: ips });
     }
 
     handleContentChange (event) {
@@ -86,7 +161,8 @@ class MessageForm extends React.Component {
         http.post('/', {
             content: this.state.content,
             expires: this.state.expires,
-            maxAccesses: this.state.maxAccesses
+            maxAccesses: this.state.maxAccesses,
+            ipWhitelist: this.state.ipWhitelist
         }).then(res => {
             console.log(res);
             this.setState({
@@ -108,6 +184,7 @@ class MessageForm extends React.Component {
                     <fieldset>
                         <legend>Make a link</legend>
                         <textarea value={this.state.content}
+                                  className="form-control"
                                   style={{ width: '100%' }}
                                   onChange={this.handleContentChange}
                                   placeholder="Secure message" />
@@ -120,11 +197,13 @@ class MessageForm extends React.Component {
                                       onChange={this.handleExpiresChange}
                                       isValidDate={date => date.isAfter(new Date())} />
                         </span>
+                        <br />
                         <label>
                             or after
                             <input type="number"
+                                   className="form-control"
                                    min="1"
-                                   style={{ width: '4em', marginLeft: '0.5em', marginRight: '0.5em' }}
+                                   style={{ display: 'inline-block', width: '4em', marginLeft: '0.5em', marginRight: '0.5em' }}
                                    value={this.state.maxAccesses}
                                    onChange={this.handleMaxAccessesChange} />
                             {   // Use the appropriately numbered noun for the selected value.
@@ -133,8 +212,10 @@ class MessageForm extends React.Component {
                                     : 'accesses'
                             }.
                         </label>
+                        <br />
+                        <EditableList elements={this.state.ipWhitelist} onChange={this.handleIpWhitelistChange} />
                     </fieldset>
-                    <input type="submit" value="submit" />
+                    <input type="submit" className="form-control" value="submit" />
                 </form>
                 { this.state.id ? (
                     <div style={{ display: 'table', margin: '0 auto', paddingTop: '30px' }}>
