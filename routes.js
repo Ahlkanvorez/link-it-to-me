@@ -54,10 +54,10 @@
         const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         console.log(userIp);
         messages.findById(req.params.id, userIp, m => {
-            if (!m || !m.content) {
-                res.redirect(req.user ? '/admin' : '/');
-            } else if (m === 'forbidden') {
+            if (m === 'forbidden') {
                 res.render('forbidden');
+            } else if (!m || !m.content) {
+                res.redirect(req.user ? '/admin' : '/');
             } else {
                 res.render('message', {
                     content: m.content,
