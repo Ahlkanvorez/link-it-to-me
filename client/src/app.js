@@ -26,6 +26,20 @@ const Message = props => (
             <td className="text-right">Views remaining: </td>
             <td>{ props.value.maxAccesses - props.value.accesses }</td>
         </tr>
+        <tr>
+            <td className="text-right">IP Whitelist: </td>
+            <td>
+                <ul>
+                {
+                    props.value.ipWhitelist
+                        ? props.value.ipWhitelist.map(ip => (
+                            <li key={ip}>{ip}</li>
+                        )) : null
+
+                }
+                </ul>
+            </td>
+        </tr>
         </tbody>
     </table>
 );
