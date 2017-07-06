@@ -73,6 +73,10 @@
             insert: (message, callback) => {
                 if (!message) {
                     callback();
+                } else if (message.content.length / 2 > 1024 * 1024) {
+                    // If the size of the content (which is an array of 16 bit, i.e. 2 byte chars) is over 1 mb, do not
+                    // put it in the database.
+                    callback();
                 } else {
                     message.expires = new Date(message.expires);
                     const m = new Message(message);

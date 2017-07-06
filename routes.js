@@ -94,10 +94,14 @@
             creatorId: req.user.id,
             ipWhitelist: req.body.ipWhitelist || []
         }, id => {
-            res.json({
-                id: id,
-                content: req.body.content
-            });
+            if (!id) {
+                res.json({ content: 'Sorry, that message is too large. The content cannot be over 1 mega-byte.' });
+            } else {
+                res.json({
+                    id: id,
+                    content: req.body.content
+                });
+            }
         });
     });
 
