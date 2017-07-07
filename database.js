@@ -15,6 +15,29 @@ const Message = mongoose.model('Message', messageSchema);
 const messages = (() => {
     const isExpired = m => (m.expires <= new Date() || m.accesses >= m.maxAccesses);
 
+    const deleteExpiredMessages = () => {
+        Message.find({}, (err, messages) => {
+            if (err) {
+                console.log(err);
+            }
+            messages.forEach(m => {
+                Message.remove({ _id: m._id }, err => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`Deleted expired message: ${m}`);
+                });
+            });
+        }).$where(function () {
+            return isExpired(this);
+        });
+    };
+    // Delete expired messages on startup.
+    deleteExpiredMessages();
+
+    // Delete expired messages every day.
+    setTimeout(deleteExpiredMessages, 1000 * 60 * 60 * 24);
+
     return {
         findByCreatorId: (id, callback) => {
             Message.find({ creatorId: id }, (err, messages) => {

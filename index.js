@@ -53,6 +53,7 @@ passport.deserializeUser((obj, callback) => {
 });
 
 const mongoUri = conf['mongo-uri'];
+mongoose.Promise = global.Promise; // enable a non-deprecated promise library.
 mongoose.connect(mongoUri);
 
 app.use((req, res, next) => {
