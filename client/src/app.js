@@ -45,6 +45,21 @@ const MessageLinkInfo = ({ id, messageContent }) => (
     </div>
 );
 
+const LoginStatusWarning = ({ username }) => (
+    <div>
+        { username === 'Anonymous'
+            ? (
+                <p>
+                    Warning: it seems you are sending messages anonymously. That's fine if it's what you want, but keep
+                    in mind that you cannot recover or view your messages if you lose them. If you login, you can view
+                    any messages (at least until they explode) that you make while logged in.
+                </p>
+            )
+            : null
+        }
+    </div>
+);
+
 class App extends React.Component {
     constructor (props) {
         super(props);
@@ -103,6 +118,7 @@ class App extends React.Component {
                     <div className="col-lg-6">
                         <MessageForm onSubmit={this.handleMessageSubmit} />
                         <MessageLinkInfo id={id} messageContent={messageContent} />
+                        <LoginStatusWarning username={username} />
                     </div>
                     <MessageList className="col-lg-6" messages={messages} />
                 </div>

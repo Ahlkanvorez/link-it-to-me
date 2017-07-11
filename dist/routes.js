@@ -60,10 +60,9 @@ router.get('/auth/logout', function (req, res) {
     res.redirect('/');
 });
 
-// TODO: consider requiring authentication to view a link.
 router.get('/view/:id', function (req, res) {
     var userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(userIp);
+    console.log('Ip (' + userIp + ') attempted to view message by id: ' + req.params.id);
     _database.messages.findById(req.params.id, userIp, function (m) {
         if (m === 'forbidden') {
             res.render('forbidden');
@@ -122,4 +121,3 @@ router.post('/', function (req, res) {
 });
 
 module.exports.router = router;
-//# sourceMappingURL=routes.js.map

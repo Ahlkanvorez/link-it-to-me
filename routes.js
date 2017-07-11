@@ -47,10 +47,9 @@ router.get('/auth/logout', (req, res) => {
     res.redirect('/');
 });
 
-// TODO: consider requiring authentication to view a link.
 router.get('/view/:id', (req, res) => {
     const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(userIp);
+    console.log(`Ip (${userIp}) attempted to view message by id: ${req.params.id}`);
     messages.findById(req.params.id, userIp, m => {
         if (m === 'forbidden') {
             res.render('forbidden');
