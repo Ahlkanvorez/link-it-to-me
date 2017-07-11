@@ -80,6 +80,10 @@ class MessageForm extends React.Component {
                             }.
                         </label>
                         <br />
+                        <p>
+                            If you would like to add an IPv4 address to the whitelist, prefix the address with "::ffff:"
+                            to convert it to an IPv6 address.
+                        </p>
                         <EditableList elements={this.state.ipWhitelist} onChange={this.handleIpWhitelistChange} />
                     </fieldset>
                     <input type="submit" className="form-control" value="submit" />
