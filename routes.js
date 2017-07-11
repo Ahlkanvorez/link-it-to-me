@@ -82,14 +82,19 @@ router.get('/admin', authRequired, addTemplateVariables, (req, res) => {
     res.sendFile(path.join(__dirname, '/../client/build/', 'index.html'));
 });
 
-router.post('/', authRequired, (req, res) => {
+// Same as the admin panel, only it doesn't display a list of messages, because no one is logged in.
+router.get('/guest', (req, res) => {
+    res.sendFile(path.join(__dirname, '/../client/build/', 'index.html'));
+});
+
+router.post('/', (req, res) => {
     messages.insert({
         content: req.body.content,
         expires: req.body.expires,
         accesses: 0,
         maxAccesses: req.body.maxAccesses || 1,
-        creatorName: req.user.displayName || 'Anonymous',
-        creatorId: req.user.id,
+        creatorName: req.user && req.user.displayName || 'Anonymous',
+        creatorId: req.user && req.user.id || 0, // Let 0 be the ID for Anonymous users.
         ipWhitelist: req.body.ipWhitelist || []
     }, id => {
         if (!id) {

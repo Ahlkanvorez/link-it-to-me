@@ -128,4 +128,3 @@ var messages = function () {
 
 exports.Message = Message;
 exports.messages = messages;
-//# sourceMappingURL=database.js.map
