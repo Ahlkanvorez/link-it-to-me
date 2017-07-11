@@ -1,6 +1,14 @@
 import mongoose, { Schema } from  'mongoose';
+import crypto from 'crypto';
+
+const hash = text => {
+    let h = crypto.createHash('sha256');
+    h.update(String(text));
+    return h.digest('hex');
+};
 
 const messageSchema = new Schema({
+    hashedId: String,
     content: String,
     expires: Date,
     accesses: Number,
@@ -10,27 +18,32 @@ const messageSchema = new Schema({
     ipWhitelist: [String]
 });
 
+messageSchema.pre('save', function (next) {
+    // Don't repeat unnecessary computations.
+    if (!this.hashedId) {
+        this.hashedId = hash(this._id);
+    }
+    next();
+});
+
 const Message = mongoose.model('Message', messageSchema);
 
 const messages = (() => {
     const isExpired = m => (m.expires <= new Date() || m.accesses >= m.maxAccesses);
 
     const deleteExpiredMessages = () => {
-        Message.find({}, (err, messages) => {
-            if (err) {
-                console.log(err);
-            }
+        Message.find({
+            $or: [
+                { expires: { $lt: new Date() } },
+                { $where: function () { return this.accesses >= this.maxAccesses; } }
+            ]
+        }).then(messages => {
             messages.forEach(m => {
-                Message.remove({ _id: m._id }, err => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log(`Deleted expired message: ${m}`);
-                });
+                Message.remove({_id: m._id})
+                    .catch(err => console.error(err))
+                    .then(() => console.log(`Deleted expired message: ${m}`));
             });
-        }).$where(function () {
-            return isExpired(this);
-        });
+        }).catch(err => console.error(err));
     };
     // Delete expired messages on startup.
     deleteExpiredMessages();
@@ -40,36 +53,25 @@ const messages = (() => {
 
     return {
         findByCreatorId: (id, callback) => {
-            Message.find({ creatorId: id }, (err, messages) => {
-                if (err) {
-                    console.log(err);
-                    callback();
-                }
+            Message.find({ creatorId: id }).then(messages => {
                 messages.map(m => {
                     if (isExpired(m)) {
-                        Message.remove({ _id: m._id }, err => {
-                            if (err) {
-                                console.log(err);
-                            }
-                        });
+                        Message.remove({ _id: m._id }).catch(err => console.error(err));
                     }
                 });
                 callback(messages.filter(m => !isExpired(m)));
+            }).catch(err => {
+                console.error(err);
+                callback();
             });
         },
-        findById: (id, userIp, callback) => {
-            Message.findById(id, (err, message) => {
-                if (err) {
-                    console.log(err);
-                    callback();
-                } else if (!message) {
+        findById: (hashedId, userIp, callback) => {
+            Message.find({ hashedId: hashedId }).then(messages => {
+                const message = messages[0];
+                if (!message) {
                     callback();
                 } else if (isExpired(message)) {
-                    Message.remove({ _id : message._id }, err => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    });
+                    Message.remove({ _id : message._id }).catch(err => console.error(err));
                     callback();
                 } else {
                     if (message.ipWhitelist && message.ipWhitelist.length > 0
@@ -79,32 +81,30 @@ const messages = (() => {
                         callback('forbidden');
                     } else {
                         message.accesses += 1;
-                        message.save(err => {
-                            if (err) {
-                                console.log(err);
-                            }
-                            callback(message);
-                        });
+                        message.save()
+                            .then(() => callback(message))
+                            .catch(err => console.error(err));
                     }
                 }
+            }).catch(err => {
+                console.error(err);
+                callback();
             });
         },
         insert: (message, callback) => {
             if (!message) {
                 callback();
-            } else if (message.content.length / 2 > 1024 * 1024) {
-                // If the size of the content (which is an array of 16 bit, i.e. 2 byte chars) is over 1 mb, do not
-                // put it in the database.
+            } else if (message.content.length > 3000) {
+                // If the message is over 3000 characters in length, don't put it in the database.
                 callback();
             } else {
                 message.expires = new Date(message.expires);
                 const m = new Message(message);
-                m.save(err => {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
-                callback(m._id);
+                m.save()
+                    .then(message => {
+                        callback(message.hashedId)
+                    })
+                    .catch(err => console.error(err));
             }
         }
     };

@@ -84,26 +84,30 @@ class App extends React.Component {
 
     sendMessage (message) {
         http.post('/', message).then(res => {
+            console.log(res);
             this.setState({
                 id: res.data.id,
                 messageContent: res.data.content
             });
-        }).catch(err => {
-            console.log(err);
-        });
+        }).catch(err => console.log(err));
     }
 
     updateMessages () {
-        http.get('/messages').then(res => {
-            if (res) {
-                this.setState({
-                    username: res.data.username || 'Anonymous',
-                    messages: res.data.messages || []
-                });
-            }
-        }).catch(err => {
-            console.log(err);
-        });
+        if (this.state.username !== 'Anonymous') {
+            http.get('/messages').then(res => {
+                if (res) {
+                    this.setState({
+                        username: res.data.username,
+                        messages: res.data.messages || []
+                    });
+                }
+            }).catch(err => console.log(err));
+        } else {
+            this.setState({
+                username: 'Anonymous',
+                messages: []
+            });
+        }
     }
 
     render () {

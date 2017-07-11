@@ -9,9 +9,20 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _crypto = require('crypto');
+
+var _crypto2 = _interopRequireDefault(_crypto);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var hash = function hash(text) {
+    var h = _crypto2.default.createHash('sha256');
+    h.update(String(text));
+    return h.digest('hex');
+};
+
 var messageSchema = new _mongoose.Schema({
+    hashedId: String,
     content: String,
     expires: Date,
     accesses: Number,
@@ -19,6 +30,14 @@ var messageSchema = new _mongoose.Schema({
     creatorName: String,
     creatorId: Number,
     ipWhitelist: [String]
+});
+
+messageSchema.pre('save', function (next) {
+    // Don't repeat unnecessary computations.
+    if (!this.hashedId) {
+        this.hashedId = hash(this._id);
+    }
+    next();
 });
 
 var Message = _mongoose2.default.model('Message', messageSchema);
@@ -29,20 +48,20 @@ var messages = function () {
     };
 
     var deleteExpiredMessages = function deleteExpiredMessages() {
-        Message.find({}, function (err, messages) {
-            if (err) {
-                console.log(err);
-            }
+        Message.find({
+            $or: [{ expires: { $lt: new Date() } }, { $where: function $where() {
+                    return this.accesses >= this.maxAccesses;
+                } }]
+        }).then(function (messages) {
             messages.forEach(function (m) {
-                Message.remove({ _id: m._id }, function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log('Deleted expired message: ' + m);
+                Message.remove({ _id: m._id }).catch(function (err) {
+                    return console.error(err);
+                }).then(function () {
+                    return console.log('Deleted expired message: ' + m);
                 });
             });
-        }).$where(function () {
-            return isExpired(this);
+        }).catch(function (err) {
+            return console.error(err);
         });
     };
     // Delete expired messages on startup.
@@ -53,37 +72,30 @@ var messages = function () {
 
     return {
         findByCreatorId: function findByCreatorId(id, callback) {
-            Message.find({ creatorId: id }, function (err, messages) {
-                if (err) {
-                    console.log(err);
-                    callback();
-                }
+            Message.find({ creatorId: id }).then(function (messages) {
                 messages.map(function (m) {
                     if (isExpired(m)) {
-                        Message.remove({ _id: m._id }, function (err) {
-                            if (err) {
-                                console.log(err);
-                            }
+                        Message.remove({ _id: m._id }).catch(function (err) {
+                            return console.error(err);
                         });
                     }
                 });
                 callback(messages.filter(function (m) {
                     return !isExpired(m);
                 }));
+            }).catch(function (err) {
+                console.error(err);
+                callback();
             });
         },
-        findById: function findById(id, userIp, callback) {
-            Message.findById(id, function (err, message) {
-                if (err) {
-                    console.log(err);
-                    callback();
-                } else if (!message) {
+        findById: function findById(hashedId, userIp, callback) {
+            Message.find({ hashedId: hashedId }).then(function (messages) {
+                var message = messages[0];
+                if (!message) {
                     callback();
                 } else if (isExpired(message)) {
-                    Message.remove({ _id: message._id }, function (err) {
-                        if (err) {
-                            console.log(err);
-                        }
+                    Message.remove({ _id: message._id }).catch(function (err) {
+                        return console.error(err);
                     });
                     callback();
                 } else {
@@ -95,32 +107,32 @@ var messages = function () {
                         callback('forbidden');
                     } else {
                         message.accesses += 1;
-                        message.save(function (err) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            callback(message);
+                        message.save().then(function () {
+                            return callback(message);
+                        }).catch(function (err) {
+                            return console.error(err);
                         });
                     }
                 }
+            }).catch(function (err) {
+                console.error(err);
+                callback();
             });
         },
         insert: function insert(message, callback) {
             if (!message) {
                 callback();
-            } else if (message.content.length / 2 > 1024 * 1024) {
-                // If the size of the content (which is an array of 16 bit, i.e. 2 byte chars) is over 1 mb, do not
-                // put it in the database.
+            } else if (message.content.length > 3000) {
+                // If the message is over 3000 characters in length, don't put it in the database.
                 callback();
             } else {
                 message.expires = new Date(message.expires);
                 var m = new Message(message);
-                m.save(function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
+                m.save().then(function (message) {
+                    callback(message.hashedId);
+                }).catch(function (err) {
+                    return console.error(err);
                 });
-                callback(m._id);
             }
         }
     };

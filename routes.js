@@ -97,10 +97,10 @@ router.post('/', (req, res) => {
         ipWhitelist: req.body.ipWhitelist || []
     }, id => {
         if (!id) {
-            res.json({ content: 'Sorry, that message is too large. The content cannot be over 1 mega-byte.' });
+            res.json({ content: 'Sorry, that message is too long; it cannot be over 3000 characters in length.' });
         } else {
             res.json({
-                id: id,
+                id,
                 content: req.body.content
             });
         }
