@@ -51,6 +51,14 @@ const messages = (() => {
     // Delete expired messages every day.
     setTimeout(deleteExpiredMessages, 1000 * 60 * 60 * 24);
 
+    const exposeOnlyHashedId = m => {
+        m = m.toJSON();
+        m.id = m.hashedId;
+        m.hashedId = undefined;
+        m._id = undefined;
+        return m;
+    };
+
     return {
         findByCreatorId: (id, callback) => {
             Message.find({ creatorId: id }).then(messages => {
@@ -59,7 +67,7 @@ const messages = (() => {
                         Message.remove({ _id: m._id }).catch(err => console.error(err));
                     }
                 });
-                callback(messages.filter(m => !isExpired(m)));
+                callback(messages.filter(m => !isExpired(m)).map(exposeOnlyHashedId));
             }).catch(err => {
                 console.error(err);
                 callback();
@@ -82,7 +90,7 @@ const messages = (() => {
                     } else {
                         message.accesses += 1;
                         message.save()
-                            .then(() => callback(message))
+                            .then(() => callback(exposeOnlyHashedId(message)))
                             .catch(err => console.error(err));
                     }
                 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-const Message = ({ value: { content, _id: id, expires, maxAccesses, accesses, ipWhitelist } }) => (
+const Message = ({ value: { content, id, expires, maxAccesses, accesses, ipWhitelist } }) => (
     <table className="table">
         <tbody>
         <tr>
@@ -42,7 +42,7 @@ const MessageList = ({ className, messages }) => (
                     <ul style={{ listStyleType: 'none' }}>
                         {
                             messages.map(m => (
-                                <li key={ m._id }>
+                                <li key={ m.id }>
                                     <Message value={m} />
                                 </li>
                             ))

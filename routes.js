@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import path from 'path';
-import { messages } from './database.js';
+import { messages, hash } from './database.js';
 
 const router = express.Router();
 
@@ -37,7 +37,7 @@ router.get('/auth/login', (req, res, next) => {
 }, passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 router.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
-    const origin = req.session.oauth2return || '/admin';
+    const origin = req.session.oauth2return || `/user`;
     delete req.session.oauth2return;
     res.redirect(origin);
 });
@@ -54,7 +54,7 @@ router.get('/message/:id', (req, res) => {
         if (m === 'forbidden') {
             res.render('forbidden');
         } else if (!m || !m.content) {
-            res.redirect(req.user ? '/admin' : '/');
+            res.redirect(req.user ? '/user' : '/');
         } else {
             res.json({
                 content: m.content,
@@ -81,11 +81,11 @@ router.get('/', (req, res) => {
     res.render('index');
 });
 
-router.get('/admin', authRequired, addTemplateVariables, (req, res) => {
+router.get('/user', authRequired, addTemplateVariables, (req, res) => {
     res.sendFile(path.join(__dirname, '/../client/build/', 'index.html'));
 });
 
-// Same as the admin panel, only it doesn't display a list of messages, because no one is logged in.
+// Same as the user panel, only it doesn't display a list of messages, because no one is logged in.
 router.get('/guest', (req, res) => {
     res.sendFile(path.join(__dirname, '/../client/build/', 'index.html'));
 });

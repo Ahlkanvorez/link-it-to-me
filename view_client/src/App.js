@@ -77,8 +77,8 @@ class View extends Component {
         axios.get(`/message/${this.props.match.params.id}`)
             .then(({data: { content, creator }}) => {
                 this.setState({
-                    content: content || 'The message already exploded. Sorry!',
-                    creator: creator || 'Boom!'});
+                    content: content || "It looks like there's no message here. Maybe it already blew up, or maybe it never existed?",
+                    creator: creator || 'Huh?'});
             })
             .catch(err => {
                 console.error(err);

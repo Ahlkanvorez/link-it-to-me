@@ -50,7 +50,7 @@ router.get('/auth/login', function (req, res, next) {
 }, _passport2.default.authenticate('google', { scope: ['email', 'profile'] }));
 
 router.get('/auth/google/callback', _passport2.default.authenticate('google'), function (req, res) {
-    var origin = req.session.oauth2return || '/admin';
+    var origin = req.session.oauth2return || '/user';
     delete req.session.oauth2return;
     res.redirect(origin);
 });
@@ -67,7 +67,7 @@ router.get('/message/:id', function (req, res) {
         if (m === 'forbidden') {
             res.render('forbidden');
         } else if (!m || !m.content) {
-            res.redirect(req.user ? '/admin' : '/');
+            res.redirect(req.user ? '/user' : '/');
         } else {
             res.json({
                 content: m.content,
@@ -94,11 +94,11 @@ router.get('/', function (req, res) {
     res.render('index');
 });
 
-router.get('/admin', authRequired, addTemplateVariables, function (req, res) {
+router.get('/user', authRequired, addTemplateVariables, function (req, res) {
     res.sendFile(_path2.default.join(__dirname, '/../client/build/', 'index.html'));
 });
 
-// Same as the admin panel, only it doesn't display a list of messages, because no one is logged in.
+// Same as the user panel, only it doesn't display a list of messages, because no one is logged in.
 router.get('/guest', function (req, res) {
     res.sendFile(_path2.default.join(__dirname, '/../client/build/', 'index.html'));
 });

@@ -70,6 +70,14 @@ var messages = function () {
     // Delete expired messages every day.
     setTimeout(deleteExpiredMessages, 1000 * 60 * 60 * 24);
 
+    var exposeOnlyHashedId = function exposeOnlyHashedId(m) {
+        m = m.toJSON();
+        m.id = m.hashedId;
+        m.hashedId = undefined;
+        m._id = undefined;
+        return m;
+    };
+
     return {
         findByCreatorId: function findByCreatorId(id, callback) {
             Message.find({ creatorId: id }).then(function (messages) {
@@ -82,7 +90,7 @@ var messages = function () {
                 });
                 callback(messages.filter(function (m) {
                     return !isExpired(m);
-                }));
+                }).map(exposeOnlyHashedId));
             }).catch(function (err) {
                 console.error(err);
                 callback();
@@ -108,7 +116,7 @@ var messages = function () {
                     } else {
                         message.accesses += 1;
                         message.save().then(function () {
-                            return callback(message);
+                            return callback(exposeOnlyHashedId(message));
                         }).catch(function (err) {
                             return console.error(err);
                         });

@@ -4,9 +4,6 @@ import './react-datetime.css'
 import MessageList from './messages.js';
 import MessageForm from './messageForm.js';
 
-const baseUrl = 'http://localhost:3001';
-const http = axios.create({ baseURL: baseUrl });
-
 const Navbar = ({ username }) => (
     <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div className="container">
@@ -26,7 +23,7 @@ const Navbar = ({ username }) => (
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav">
                     <li>
-                        <a href={`${baseUrl}/auth/logout`}>
+                        <a href={`/auth/logout`}>
                             Logout
                         </a>
                     </li>
@@ -72,7 +69,7 @@ class App extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            username: 'Anonymous',
+            username: '',
             messages: []
         };
 
@@ -91,29 +88,31 @@ class App extends React.Component {
     }
 
     sendMessage (message) {
-        http.post('/', message).then(res => {
-            console.log(res);
+        axios.post('/', message).then(res => {
             this.setState({
                 id: res.data.id,
                 messageContent: res.data.content
             });
-        }).catch(err => console.log(err));
+        }).catch(err => console.error(err));
     }
 
     updateMessages () {
+        // If already anonymous, continue anonymously.
         if (this.state.username !== 'Anonymous') {
-            http.get('/messages').then(res => {
+            axios.get('/messages').then(res => {
                 if (res) {
                     this.setState({
                         username: res.data.username,
                         messages: res.data.messages || []
                     });
                 }
-            }).catch(err => console.log(err));
-        } else {
-            this.setState({
-                username: 'Anonymous',
-                messages: []
+            }).catch(err => {
+                // If the user information cannot be gathered from the server, proceed anonymously.
+                this.setState({
+                    username: "Anonymous",
+                    messages: []
+                });
+                console.error(err)
             });
         }
     }
