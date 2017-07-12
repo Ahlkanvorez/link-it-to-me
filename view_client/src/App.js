@@ -59,6 +59,11 @@ const Navbar = () => (
                             Login
                         </a>
                     </li>
+                    <li>
+                        <a href="/guest">
+                            Message Anonymously
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
