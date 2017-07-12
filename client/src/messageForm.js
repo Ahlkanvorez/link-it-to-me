@@ -64,7 +64,6 @@ class MessageForm extends React.Component {
                                       onChange={this.handleExpiresChange}
                                       isValidDate={date => date.isAfter(new Date())} />
                         </span>
-                        <br />
                         <label>
                             or after
                             <input type="number"

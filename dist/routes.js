@@ -60,7 +60,7 @@ router.get('/auth/logout', function (req, res) {
     res.redirect('/');
 });
 
-router.get('/view/:id', function (req, res) {
+router.get('/message/:id', function (req, res) {
     var userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log('Ip (' + userIp + ') attempted to view message by id: ' + req.params.id);
     _database.messages.findById(req.params.id, userIp, function (m) {
@@ -69,12 +69,16 @@ router.get('/view/:id', function (req, res) {
         } else if (!m || !m.content) {
             res.redirect(req.user ? '/admin' : '/');
         } else {
-            res.render('message', {
+            res.json({
                 content: m.content,
                 creator: m.creatorName || 'Anonymous'
             });
         }
     });
+});
+
+router.get('/view/:id', function (req, res) {
+    res.sendFile(_path2.default.join(__dirname, '/../view_client/build/', 'index.html'));
 });
 
 router.get('/messages', authRequired, addTemplateVariables, function (req, res) {

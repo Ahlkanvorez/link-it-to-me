@@ -106,6 +106,7 @@ app.use('/', _routes.router);
 
 // Files for the compiled React app.
 app.use(_express2.default.static(_path2.default.join(__dirname, '/../client/build')));
+app.use(_express2.default.static(_path2.default.join(__dirname, '/../view_client/build')));
 
 // Basic 404 handler
 app.use(function (req, res) {
