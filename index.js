@@ -94,4 +94,4 @@ app.use((err, req, res) => {
 
 const port = 3001;
 console.log(`Listening on port ${port}`);
-app.listen(port);
+module.exports = app.listen(port);
