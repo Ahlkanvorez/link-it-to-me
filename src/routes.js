@@ -49,7 +49,7 @@ router.get('/auth/logout', (req, res) => {
 
 router.get('/message/:id', (req, res) => {
     const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(`Ip (${userIp}) attempted to view message by id: ${req.params.id}`);
+    // console.log(`Ip (${userIp}) attempted to view message by id: ${req.params.id}`);
     messages.findById(req.params.id, userIp, m => {
         if (m === 'forbidden') {
             res.render('forbidden');

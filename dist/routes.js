@@ -62,7 +62,7 @@ router.get('/auth/logout', function (req, res) {
 
 router.get('/message/:id', function (req, res) {
     var userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log('Ip (' + userIp + ') attempted to view message by id: ' + req.params.id);
+    // console.log(`Ip (${userIp}) attempted to view message by id: ${req.params.id}`);
     _database.messages.findById(req.params.id, userIp, function (m) {
         if (m === 'forbidden') {
             res.render('forbidden');
