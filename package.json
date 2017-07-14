@@ -28,6 +28,7 @@
     "mocha": "^3.4.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node dist/index.js"
   }
 }
