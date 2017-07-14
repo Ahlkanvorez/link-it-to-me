@@ -59,3 +59,30 @@ describe('GET /auth/google/callback', function () {
         );
     })
 });
+
+describe('GET /auth/logout', function () {
+    it('Returns status code 200 (Ok)', function () {
+        chai.request(app)
+            .get('/auth/logout')
+            .send()
+            .then(function (res) {
+                expect(res).to.have.status(200);
+            }).catch(function (err) {
+                throw err;
+            }
+        );
+    });
+
+    it('Redirects to /', function () {
+        chai.request(app)
+            .get('/auth/logout')
+            .send()
+            .then(function (res) {
+                expect(res).to.redirect;
+                expect(res).to.redirectTo('/');
+            }).catch(function (err) {
+                throw err;
+            }
+        );
+    });
+});
