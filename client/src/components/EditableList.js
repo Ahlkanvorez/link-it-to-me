@@ -15,7 +15,10 @@ class EditableList extends React.Component {
     }
 
     onChange (oldElement, newElement) {
-        this.props.onChange(this.props.elements.map(x => x === oldElement ? newElement : x));
+        this.props.onChange(this.props.elements
+            .map(x => x === oldElement
+                ? newElement
+                : x));
     }
 
     addItem () {
@@ -27,16 +30,27 @@ class EditableList extends React.Component {
             <table className="table">
                 <thead>
                 <tr>
-                    <th>{this.props.elements.length === 0 ? 'Publicly Viewable' : 'Whitelisted IP Addresses'}</th>
                     <th>
-                        <button className="btn btn-default" style={{ width: '100%' }} type="button" onClick={this.addItem}>Whitelist an IP</button>
+                        {this.props.elements.length === 0
+                        ? 'Publicly Viewable'
+                        : 'Whitelisted IP Addresses'}
+                    </th>
+                    <th>
+                        <button className="btn btn-default"
+                                style={{ width: '100%' }}
+                                type="button"
+                                onClick={this.addItem}>Whitelist an IP
+                        </button>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                 {   // Display each of the messages
                     this.props.elements.map((e, index) => (
-                        <RemovableListInput key={index} value={e} onDelete={this.onDelete} onChange={this.onChange} />
+                        <RemovableListInput key={index}
+                                value={e}
+                                onDelete={this.onDelete}
+                                onChange={this.onChange} />
                     ))
                 }
                 </tbody>
