@@ -26,7 +26,7 @@ const NavbarLinks = ({ links }) => (
         <ul className="nav navbar-nav">
             {
                 links.map(({ text, url }) => (
-                    <li>
+                    <li key={ url }>
                         <a href={url}>
                             { text }
                         </a>
