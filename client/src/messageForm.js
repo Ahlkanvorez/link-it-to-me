@@ -11,7 +11,8 @@ class MessageForm extends React.Component {
         this.state = {
             content: '',
             expires: date,
-            maxAccesses: '1', // NOTE: The value of an <input type="number" /> is a string!
+            // NOTE: The value of an <input type="number" /> is a string!
+            maxAccesses: '1',
             ipWhitelist: []
         };
 
@@ -47,7 +48,11 @@ class MessageForm extends React.Component {
     render () {
         return (
             <div>
-                <form onSubmit={this.handleSubmit} style={{ display: 'table', margin: '0 auto' }}>
+                <form onSubmit={this.handleSubmit}
+                        style={ {
+                            display: 'table',
+                            margin: '0 auto'
+                        } }>
                     <fieldset>
                         <legend>Make a link</legend>
                         <textarea value={this.state.content}
@@ -59,33 +64,50 @@ class MessageForm extends React.Component {
                         <label>
                             Self-destruct on
                         </label>
-                        <span style={{ display: 'inline-block', marginLeft: '0.5em', marginRight: '0.5em' }}>
+                        <span style={ {
+                                    display: 'inline-block',
+                                    marginLeft: '0.5em',
+                                    marginRight: '0.5em'
+                                } }>
                             <DateTime value={this.state.expires}
                                       onChange={this.handleExpiresChange}
-                                      isValidDate={date => date.isAfter(new Date())} />
+                                      isValidDate={
+                                          date => date.isAfter(new Date())
+                                      } />
                         </span>
                         <label>
                             or after
                             <input type="number"
                                    className="form-control"
                                    min="1"
-                                   style={{ display: 'inline-block', width: '4em', marginLeft: '0.5em', marginRight: '0.5em' }}
+                                   style={ {
+                                       display: 'inline-block',
+                                       width: '4em',
+                                       marginLeft: '0.5em',
+                                       marginRight: '0.5em'
+                                    } }
                                    value={this.state.maxAccesses}
                                    onChange={this.handleMaxAccessesChange} />
-                            {   // Use the appropriately numbered noun for the selected value.
+                            {   // Use the appropriately numbered noun for the
+                                // selected value.
                                 this.state.maxAccesses === '1'
                                     ? 'access'
                                     : 'accesses'
                             }.
                         </label>
                         <br />
+                        { /* TODO: Make this automatic. */ }
                         <p>
-                            If you would like to add an IPv4 address to the whitelist, prefix the address with "::ffff:"
-                            to convert it to an IPv6 address.
+                            If you would like to add an IPv4 address to the
+                            whitelist, prefix the address with "::ffff:" to
+                            convert it to an IPv6 address.
                         </p>
-                        <EditableList elements={this.state.ipWhitelist} onChange={this.handleIpWhitelistChange} />
+                        <EditableList elements={this.state.ipWhitelist}
+                                onChange={this.handleIpWhitelistChange} />
                     </fieldset>
-                    <input type="submit" className="form-control" value="submit" />
+                    <input type="submit"
+                            className="form-control"
+                            value="submit" />
                 </form>
             </div>
         );

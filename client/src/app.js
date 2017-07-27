@@ -49,7 +49,8 @@ class App extends React.Component {
                     });
                 }
             }).catch(err => {
-                // If the user information cannot be gathered from the server, proceed anonymously.
+                // If the user information cannot be gathered from the server,
+                // proceed anonymously.
                 this.setState({
                     username: "Anonymous",
                     messages: []
@@ -70,7 +71,8 @@ class App extends React.Component {
                 <div className="row" style={{ marginTop: '60px' }}>
                     <div className="col-lg-6">
                         <MessageForm onSubmit={this.handleMessageSubmit} />
-                        <MessageLinkInfo id={id} messageContent={messageContent} />
+                        <MessageLinkInfo id={id}
+                                messageContent={messageContent} />
                         <LoginStatusWarning username={username} />
                     </div>
                     <MessageList className="col-lg-6" messages={messages} />
