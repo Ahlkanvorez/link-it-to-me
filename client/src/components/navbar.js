@@ -16,7 +16,8 @@ const Navbar = ({ username }) => (
                     {username}
                 </a>
             </div>
-            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div className="collapse navbar-collapse"
+                    id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav">
                     <li>
                         <a href={`/auth/logout`}>
