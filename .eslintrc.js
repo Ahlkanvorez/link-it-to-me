@@ -17,6 +17,7 @@ module.exports = {
                 named: "always",
                 asyncArrow: "always"
             }
-        ]
+        ],
+        "comma-dangle": [ "error", "never" ] // no comma-dangle
     }
 };

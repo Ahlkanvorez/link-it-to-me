@@ -25,7 +25,8 @@
     "chai-http": "^3.0.0",
     "eslint": "^4.1.1",
     "eslint-config-google": "^0.8.0",
-    "mocha": "^3.4.2"
+    "mocha": "^3.4.2",
+    "webpack": "^3.4.1"
   },
   "scripts": {
     "test": "mocha",
