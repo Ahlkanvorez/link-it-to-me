@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import './react-datetime.css'
-import MessageList from './messages.js';
+import MessageList from './components/MessageList';
 import MessageForm from './messageForm.js';
 import Navbar from './components/Navbar';
 import MessageLinkInfo from './components/MessageLinkInfo';

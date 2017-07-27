@@ -1,5 +1,5 @@
 import React from 'react';
-import RemovableListInput from './components/RemovableListInput';
+import RemovableListInput from './RemovableListInput';
 
 class EditableList extends React.Component {
     constructor (props) {
