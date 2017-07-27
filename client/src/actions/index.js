@@ -1,13 +1,14 @@
 // Action types
-export const SET_MESSAGE_TEXT = 'SET_MESSAGE_TEXT';
+export const SET_MESSAGE_CONTENT = 'SET_MESSAGE_CONTENT';
 export const SET_EXPIRATION_DATE = 'SET_EXPIRATION_DATE';
 export const SET_MAXIMUM_ACCESSES = 'SET_MAXIMUM_ACCESSES';
 export const ADD_WHITELISTED_IP = 'ADD_WHITELISTED_IP';
 export const REMOVE_WHITELISTED_IP = 'REMOVE_WHITELISTED_IP';
+export const SET_USERNAME = 'GET_USERNAME';
 
 // Action creators
-export function setMessageText (text) {
-    return { type: SET_MESSAGE_TEXT, text };
+export function setMessageCONTENT (content) {
+    return { type: SET_MESSAGE_CONTENT, content };
 };
 
 export function setExpirationDate (date) {
@@ -25,3 +26,7 @@ export function addWhitelistedIp (ip) {
 export function removeWhitelistedIp (ip) {
     return { type: REMOVE_WHITELISTED_IP, ip };
 };
+
+export function setUsername (username) {
+    return { type: SET_USERNAME, username };
+}

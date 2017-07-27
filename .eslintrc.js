@@ -17,6 +17,7 @@ module.exports = {
         ],
         "comma-dangle": [ "error", "never" ], // no comma-dangle
         "object-curly-spacing": [ "error", "always" ],
+        "array-bracket-spacing": [ "error", "always" ],
         "switch-colon-spacing": 0,
         "require-jsdoc": [ 0, {
             "require": {
@@ -25,6 +26,7 @@ module.exports = {
                 "ClassDeclaration": false,
                 "ArrowFunctionExpression": false
             }
-        }]
+        }],
+        "arrow-parens": [ "error", "as-needed" ]
     }
 };
