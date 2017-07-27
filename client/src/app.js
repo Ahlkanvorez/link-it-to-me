@@ -66,16 +66,19 @@ class App extends React.Component {
             <div className="container">
                 <div className="row"
                      style={{ display: 'table', margin: '0 auto' }}>
-                    <Navbar username={username} />
+                    <Navbar username={ username }
+                            links={[
+                                { text: 'Logout', url: '/auth/logout' }
+                            ]} />
                 </div>
                 <div className="row" style={{ marginTop: '60px' }}>
                     <div className="col-lg-6">
-                        <MessageForm onSubmit={this.handleMessageSubmit} />
-                        <MessageLinkInfo id={id}
-                                messageContent={messageContent} />
-                        <LoginStatusWarning username={username} />
+                        <MessageForm onSubmit={ this.handleMessageSubmit } />
+                        <MessageLinkInfo id={ id }
+                                messageContent={ messageContent } />
+                        <LoginStatusWarning username={ username } />
                     </div>
-                    <MessageList className="col-lg-6" messages={messages} />
+                    <MessageList className="col-lg-6" messages={ messages } />
                 </div>
             </div>
         );

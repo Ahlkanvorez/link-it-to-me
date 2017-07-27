@@ -1,31 +1,47 @@
 import React from 'react';
 
-const Navbar = ({ username = 'Anonymous' }) => (
-    <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div className="container">
-            <div className="navbar-header">
-                <button type="button" className="navbar-toggle"
-                        data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1">
-                    <span className="sr-only">Toggle navigation</span>
-                    <span className="icon-bar"></span>
-                    <span className="icon-bar"></span>
-                    <span className="icon-bar"></span>
-                </button>
-                <a className="navbar-brand">
-                    { username }
-                </a>
-            </div>
-            <div className="collapse navbar-collapse"
-                    id="bs-example-navbar-collapse-1">
-                <ul className="nav navbar-nav">
+const NavbarToggleButton = () => (
+    <button type="button" className="navbar-toggle"
+            data-toggle="collapse"
+            data-target="#bs-example-navbar-collapse-1">
+        <span className="sr-only">Toggle navigation</span>
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+    </button>
+);
+
+const NavbarHeader = ({ username }) => (
+    <div className="navbar-header">
+        <NavbarToggleButton />
+        <a className="navbar-brand">
+            { username }
+        </a>
+    </div>
+);
+
+const NavbarLinks = ({ links }) => (
+    <div className="collapse navbar-collapse"
+            id="bs-example-navbar-collapse-1">
+        <ul className="nav navbar-nav">
+            {
+                links.map(({ text, url }) => (
                     <li>
-                        <a href={`/auth/logout`}>
-                            Logout
+                        <a href={url}>
+                            text
                         </a>
                     </li>
-                </ul>
-            </div>
+                ))
+            }
+        </ul>
+    </div>
+);
+
+const Navbar = ({ username = 'Anonymous', links = [] }) => (
+    <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div className="container">
+            <NavbarHeader username={ username } />
+            <NavbarLinks links={ links } />
         </div>
     </div>
 );
