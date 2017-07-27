@@ -22,18 +22,20 @@ const Message = ({
         </tr>
         <tr>
             <td className="text-right">Views remaining: </td>
-            <td>{ maxAccesses - accesses }</td>
+            <td>{ Math.max(0, maxAccesses - accesses) }</td>
         </tr>
-        <tr>
-            <td className="text-right">IP Whitelist: </td>
-            <td>
-                <ul>
-                    { ipWhitelist
-                        ? ipWhitelist.map(ip => (<li key={ip}>{ip}</li>))
-                        : null }
-                </ul>
-            </td>
-        </tr>
+        { ipWhitelist
+            ? (
+                <tr>
+                    <td className="text-right">IP Whitelist: </td>
+                    <td>
+                        <ul>
+                            { ipWhitelist.map(ip => (<li key={ip}>{ip}</li>)) }
+                        </ul>
+                    </td>
+                </tr>
+            ) : null
+        }
         </tbody>
     </table>
 );

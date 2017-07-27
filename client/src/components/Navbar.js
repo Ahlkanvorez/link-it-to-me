@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navbar = ({ username }) => (
+const Navbar = ({ username = 'Anonymous' }) => (
     <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div className="container">
             <div className="navbar-header">
@@ -13,7 +13,7 @@ const Navbar = ({ username }) => (
                     <span className="icon-bar"></span>
                 </button>
                 <a className="navbar-brand">
-                    {username}
+                    { username }
                 </a>
             </div>
             <div className="collapse navbar-collapse"
