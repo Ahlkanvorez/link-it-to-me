@@ -12,13 +12,22 @@ class RemovableListInput extends React.Component {
     }
 
     render () {
+        const { value } = this.props;
         return (
             <tr>
                 <td>
-                    <input type="text" className="form-control" value={this.props.value} onChange={this.onInputChange} />
+                    <input type="text"
+                            className="form-control"
+                            value={value}
+                            onChange={this.onInputChange} />
                 </td>
                 <td>
-                    <button className="btn btn-default" style={{ width: '100%' }} type="button" onClick={() => this.props.onDelete(this.props.value)}>Delete</button>
+                    <button className="btn btn-default"
+                            style={{ width: '100%' }}
+                            type="button"
+                            onClick={() => this.props.onDelete(value)}>
+                        Delete
+                    </button>
                 </td>
             </tr>
         );
