@@ -1,6 +1,6 @@
 import React from 'react';
 import DateTime from 'react-datetime';
-import EditableList from './EditableList';
+import EditableList from './components/EditableList';
 
 class MessageForm extends React.Component {
     constructor (props) {
