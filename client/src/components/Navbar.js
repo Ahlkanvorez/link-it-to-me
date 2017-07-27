@@ -28,7 +28,7 @@ const NavbarLinks = ({ links }) => (
                 links.map(({ text, url }) => (
                     <li>
                         <a href={url}>
-                            text
+                            { text }
                         </a>
                     </li>
                 ))
