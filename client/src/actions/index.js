@@ -9,7 +9,7 @@ export const ADD_MESSAGE = 'ADD_MESSGE';
 export const SET_USERNAME = 'GET_USERNAME';
 
 // Action creators
-export function setMessageContent (content) {
+export function setMessageContent (content = '') {
     return { type: SET_MESSAGE_CONTENT, content };
 };
 
@@ -18,7 +18,7 @@ export function setExpirationDate (expirationDate = tomorrow()) {
     return { type: SET_EXPIRATION_DATE, expirationDate };
 };
 
-export function setMaximumAccesses (maxAccesses) {
+export function setMaximumAccesses (maxAccesses = 1) {
     return { type: SET_MAXIMUM_ACCESSES, maxAccesses };
 };
 
@@ -38,6 +38,6 @@ export function addMessage (message) {
     return { type: ADD_MESSAGE, message };
 }
 
-export function setUsername (username) {
+export function setUsername (username = '') {
     return { type: SET_USERNAME, username };
 }

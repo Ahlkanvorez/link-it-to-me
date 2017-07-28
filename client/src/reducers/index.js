@@ -19,7 +19,7 @@ function messages (state = [], action) {
 }
 
 function content (state = '', action) {
-    return action.type === SET_MESSAGE_CONTENT ? action.concat : state;
+    return action.type === SET_MESSAGE_CONTENT ? action.content : state;
 }
 
 function expires (state = null, action) {
