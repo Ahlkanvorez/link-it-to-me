@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const NavbarToggleButton = () => (
     <button type="button" className="navbar-toggle"
@@ -11,7 +12,7 @@ const NavbarToggleButton = () => (
     </button>
 );
 
-const NavbarHeader = ({ username }) => (
+const NavbarHeader = ({ username = 'Anonymous' }) => (
     <div className="navbar-header">
         <NavbarToggleButton />
         <a className="navbar-brand">
@@ -20,7 +21,11 @@ const NavbarHeader = ({ username }) => (
     </div>
 );
 
-const NavbarLinks = ({ links }) => (
+NavbarHeader.propTypes = {
+    username: PropTypes.string.isRequired
+};
+
+const NavbarLinks = ({ links = [] }) => (
     <div className="collapse navbar-collapse"
             id="bs-example-navbar-collapse-1">
         <ul className="nav navbar-nav">
@@ -37,7 +42,15 @@ const NavbarLinks = ({ links }) => (
     </div>
 );
 
-const Navbar = ({ username = 'Anonymous', links = [] }) => (
+NavbarLinks.propTypes = {
+    links: PropTypes.arrayOf(
+        PropTypes.shape([
+            PropTypes.string
+        ]).isRequired
+    ).isRequired
+};
+
+const Navbar = ({ username, links }) => (
     <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div className="container">
             <NavbarHeader username={ username } />
@@ -45,5 +58,14 @@ const Navbar = ({ username = 'Anonymous', links = [] }) => (
         </div>
     </div>
 );
+
+Navbar.propTypes = {
+    username: PropTypes.string,
+    links: PropTypes.arrayOf(
+        PropTypes.shape([
+            PropTypes.string
+        ]).isRequired
+    ).isRequired
+};
 
 export default Navbar;
