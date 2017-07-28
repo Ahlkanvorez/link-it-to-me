@@ -1,4 +1,5 @@
-.idea/*
-./data/db/*
+.idea/
+./data/db/
 node_modules/
 conf.json
+client/build/
