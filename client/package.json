@@ -17,6 +17,7 @@
     "start": "react-scripts start"
   },
   "devDependencies": {
+    "prop-types": "^15.5.10",
     "react-scripts": "^1.0.10"
   }
 }
