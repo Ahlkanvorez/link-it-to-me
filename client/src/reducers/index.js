@@ -10,7 +10,7 @@ import {
     SET_USERNAME
 } from '../actions';
 
-function username (state = { username: 'Anonymous' }, action) {
+function username (state = 'Anonymous', action) {
     return action.type === SET_USERNAME ? action.username : state;
 }
 
