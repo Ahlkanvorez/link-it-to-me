@@ -1,8 +1,12 @@
 module.exports = {
-    extends: "google",
+    extends: [ "google", "plugin:react/recommended" ],
+    plugins: [ "react" ],
     parserOptions: {
         ecmaVersion: 7, // This option is for syntax only.
-        sourceType: "module"
+        sourceType: "module",
+        ecmaFeatures: {
+            "jsx": true
+        }
     },
     env: {
         es6: true   // This option deals with libraries, such as Map, Set, etc.
