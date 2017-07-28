@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Message from './Message';
 
 const MessageList = ({ messages }) => (
-    (messages && messages.length > 0) ? (
+    (messages && messages.length > 0) && (
         <div style={{ display: 'table', margin: '0 auto' }}>
             <h3>Your Messages</h3>
             <ul style={{ listStyleType: 'none' }}>
@@ -16,7 +16,7 @@ const MessageList = ({ messages }) => (
                 }
             </ul>
         </div>
-    ) : null
+    )
 );
 
 MessageList.propTypes = {
