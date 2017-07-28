@@ -1,14 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import App from './app';
+import MessageApp from './app';
 import registerServiceWorker from './registerServiceWorker';
 import messageApp from './reducers';
 
 const store = createStore(messageApp);
 
 ReactDOM.render(
-    <App />,
+    <Provider store={store}>
+        <MessageApp />
+    </Provider>,
     document.getElementById('root')
 );
 
