@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
 const Message = ({
@@ -18,7 +19,7 @@ const Message = ({
         </tr>
         <tr>
             <td className="text-right">Self-destructs on: </td>
-            <td>{ moment(expires).format("dddd, MMMM Do YYYY, h:mm:ss a") }</td>
+            <td>{ moment(expires).format('dddd, MMMM Do YYYY, h:mm:ss a') }</td>
         </tr>
         <tr>
             <td className="text-right">Views remaining: </td>
@@ -39,5 +40,20 @@ const Message = ({
         </tbody>
     </table>
 );
+
+Message.propTypes = {
+    value: PropTypes.objectOf(
+        PropTypes.shape({
+            content: PropTypes.string.isRequired,
+            expires: PropTypes.instanceOf(Date).isRequired,
+            maxAccesses: PropTypes.number.isRequired,
+            ipWhitelist: PropTypes.arrayOf(
+                PropTypes.shape({
+                    ip: PropTypes.string.isRequired
+                })
+            ).isRequired
+        }).isRequired
+    ).isRequired
+};
 
 export default Message;
