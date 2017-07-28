@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const RemovableListInput = ({ value, onChange, onDelete }) => (
     <tr>
@@ -21,5 +22,11 @@ const RemovableListInput = ({ value, onChange, onDelete }) => (
         </td>
     </tr>
 );
+
+RemovableListInput.propTypes = {
+    value: PropTypes.any.isRequired,
+    onChange: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
+};
 
 export default RemovableListInput;
