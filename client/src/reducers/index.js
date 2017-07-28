@@ -22,7 +22,7 @@ function content (state = '', action) {
     return action.type === SET_MESSAGE_CONTENT ? action.concat : state;
 }
 
-function expires (state, action) {
+function expires (state = null, action) {
     return action.type === SET_EXPIRATION_DATE ? action.expirationDate : state;
 }
 
