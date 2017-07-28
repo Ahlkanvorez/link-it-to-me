@@ -4,63 +4,55 @@ import {
     SET_EXPIRATION_DATE,
     SET_MAXIMUM_ACCESSES,
     ADD_WHITELISTED_IP,
+    EDIT_WHITELISTED_IP,
     REMOVE_WHITELISTED_IP,
     ADD_MESSAGE,
     SET_USERNAME
-} from '../actions/actions';
+} from '../actions';
 
-function username (state = {}, action) {
-    switch (action) {
-        case SET_USERNAME:
-            return action.username;
-        default:
-            return state;
-    }
+function username (state = { username: 'Anonymous' }, action) {
+    return action.type === SET_USERNAME ? action.username : state;
 }
 
-function message (state = {}, action) {
+function messages (state = [], action) {
+    return action.type === ADD_MESSAGE ? [ ...state, action.message ] : state;
+}
+
+function content (state = '', action) {
+    return action.type === SET_MESSAGE_CONTENT ? action.concat : state;
+}
+
+function expires (state, action) {
+    return action.type === SET_EXPIRATION_DATE ? action.expirationDate : state;
+}
+
+function maxAccesses (state = 1, action) {
+    return action.type === SET_MAXIMUM_ACCESSES ? action.maxAccesses : state;
+}
+
+function ipWhitelist (state = [], action) {
     switch (action.type) {
-        case SET_MESSAGE_CONTENT:
-            return Object.assign({}, state, {
-                content: action.content
-            });
-        case SET_EXPIRATION_DATE:
-            return Object.assign({}, state, {
-                expirationDate: action.expirationDate
-            });
-        case SET_MAXIMUM_ACCESSES:
-            return Object.assign({}, state, {
-                maxAccesses: action.maxAccesses
-            });
         case ADD_WHITELISTED_IP:
-            return Object.assign({}, state, {
-                ipWhitelist: state.ipWhitelist.concat(action.ip)
-            });
+            return state.ipWhitelist.concat(action.ip);
+        case EDIT_WHITELISTED_IP:
+            return state.ipWhitelist
+                .map(ip => (ip === action.oldIp) ? action.newIp : ip);
         case REMOVE_WHITELISTED_IP:
-            return Object.assign({}, state, {
-                ipWhitelist: state.ipWhitelist.filter(ip => ip !== action.ip)
-            });
+            return state.ipWhitelist.filter(ip => ip !== action.ip);
         default:
             return state;
     }
 };
 
-function messages (state = [], action) {
-    switch (action.type) {
-        case ADD_MESSAGE:
-            return [
-                ...state,
-                action.message
-            ];
-        default:
-            return state;
-    }
-}
-
 const messageApp = combineReducers({
     username,
-    message,
-    messages
+    messages,
+    message: combineReducers({
+        content,
+        expires,
+        maxAccesses,
+        ipWhitelist
+    })
 });
 
 export default messageApp;
