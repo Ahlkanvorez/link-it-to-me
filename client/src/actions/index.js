@@ -13,7 +13,8 @@ export function setMessageContent (content) {
     return { type: SET_MESSAGE_CONTENT, content };
 };
 
-export function setExpirationDate (expirationDate) {
+const tomorrow = () => new Date(Date.now() + 1000 * 60 * 60 * 24);
+export function setExpirationDate (expirationDate = tomorrow()) {
     return { type: SET_EXPIRATION_DATE, expirationDate };
 };
 
