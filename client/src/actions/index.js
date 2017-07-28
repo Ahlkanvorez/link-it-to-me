@@ -3,6 +3,7 @@ export const SET_MESSAGE_CONTENT = 'SET_MESSAGE_CONTENT';
 export const SET_EXPIRATION_DATE = 'SET_EXPIRATION_DATE';
 export const SET_MAXIMUM_ACCESSES = 'SET_MAXIMUM_ACCESSES';
 export const ADD_WHITELISTED_IP = 'ADD_WHITELISTED_IP';
+export const EDIT_WHITELISTED_IP = 'EDIT_WHITELISTED_IP';
 export const REMOVE_WHITELISTED_IP = 'REMOVE_WHITELISTED_IP';
 export const ADD_MESSAGE = 'ADD_MESSGE';
 export const SET_USERNAME = 'GET_USERNAME';
@@ -22,6 +23,10 @@ export function setMaximumAccesses (maxAccesses) {
 
 export function addWhitelistedIp (ip) {
     return { type: ADD_WHITELISTED_IP, ip };
+};
+
+export function editWhitelistedIp (oldIp, newIp) {
+    return new { type: EDIT_WHITELISTED_IP, oldIp, newIp };
 };
 
 export function removeWhitelistedIp (ip) {
