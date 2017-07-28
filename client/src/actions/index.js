@@ -27,7 +27,7 @@ export function addWhitelistedIp (ip) {
 };
 
 export function editWhitelistedIp (oldIp, newIp) {
-    return new { type: EDIT_WHITELISTED_IP, oldIp, newIp };
+    return { type: EDIT_WHITELISTED_IP, oldIp, newIp };
 };
 
 export function removeWhitelistedIp (ip) {
