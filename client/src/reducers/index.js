@@ -33,12 +33,11 @@ function maxAccesses (state = 1, action) {
 function ipWhitelist (state = [], action) {
     switch (action.type) {
         case ADD_WHITELISTED_IP:
-            return state.ipWhitelist.concat(action.ip);
+            return state.concat(action.ip);
         case EDIT_WHITELISTED_IP:
-            return state.ipWhitelist
-                .map(ip => (ip === action.oldIp) ? action.newIp : ip);
+            return state.map(ip => (ip === action.oldIp) ? action.newIp : ip);
         case REMOVE_WHITELISTED_IP:
-            return state.ipWhitelist.filter(ip => ip !== action.ip);
+            return state.filter(ip => ip !== action.ip);
         default:
             return state;
     }
