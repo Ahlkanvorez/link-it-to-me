@@ -6,16 +6,40 @@ import {
     ADD_WHITELISTED_IP,
     EDIT_WHITELISTED_IP,
     REMOVE_WHITELISTED_IP,
-    ADD_MESSAGE,
-    SET_USERNAME
+    SET_USERNAME,
+    REQUEST_MESSAGES,
+    RECEIVE_MESSAGES,
+    POST_MESSAGE
 } from '../actions';
 
 function username (state = 'Anonymous', action) {
     return action.type === SET_USERNAME ? action.username : state;
 }
 
-function messages (state = [], action) {
-    return action.type === ADD_MESSAGE ? [ ...state, action.message ] : state;
+function messages (state = {
+        isFetching: false,
+        items: []
+    }, action) {
+    switch (action.type) {
+        case REQUEST_MESSAGES:
+            return Object.assign({}, state, {
+                isFetching: true,
+                didInvalidate: false
+            });
+        case RECEIVE_MESSAGES:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                items: action.messages
+            });
+        case POST_MESSAGE:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: true
+            });
+        default:
+            return state;
+    }
 }
 
 function content (state = '', action) {
@@ -43,6 +67,22 @@ function ipWhitelist (state = [], action) {
     }
 };
 
+function status (state, action) {
+    switch (action.type) {
+        case POSTING_MESSAGE:
+            return Object.assign({}, state, {
+                isPosting: true
+            });
+        case POSTED_MESSAGE:
+            return Object.assign({}, state, {
+                isPosting: false,
+                id: action.message
+            });
+        default:
+            return state;
+    }
+}
+
 const messageApp = combineReducers({
     username,
     messages,
@@ -50,7 +90,8 @@ const messageApp = combineReducers({
         content,
         expires,
         maxAccesses,
-        ipWhitelist
+        ipWhitelist,
+        status
     })
 });
 

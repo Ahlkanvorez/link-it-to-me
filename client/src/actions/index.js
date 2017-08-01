@@ -1,3 +1,8 @@
+import fetch from 'isomorphic-fetch';
+
+// TODO: Setup proper toggling of dev/production urls.
+const serverURL = 'localhost:5000';
+
 // Action types
 export const SET_MESSAGE_CONTENT = 'SET_MESSAGE_CONTENT';
 export const SET_EXPIRATION_DATE = 'SET_EXPIRATION_DATE';
@@ -7,11 +12,13 @@ export const ADD_WHITELISTED_IP = 'ADD_WHITELISTED_IP';
 export const EDIT_WHITELISTED_IP = 'EDIT_WHITELISTED_IP';
 export const REMOVE_WHITELISTED_IP = 'REMOVE_WHITELISTED_IP';
 
-export const ADD_MESSAGE = 'ADD_MESSGE';
 export const SET_USERNAME = 'GET_USERNAME';
 
-export const GET_MESSAGES = 'GET_MESSAGES';
+export const REQUEST_MESSAGES = 'REQUEST_MESSAGES';
+export const RECEIVE_MESSAGES = 'RECEIVE_MESSAGES';
 export const POST_MESSAGE = 'POST_MESSAGE';
+export const POSTING_MESSAGE = 'POSTING_MESSAGE';
+export const POSTED_MESSAGE = 'POSTED_MESSAGE';
 
 // Action creators
 export function setMessageContent (content = '') {
@@ -39,18 +46,57 @@ export function removeWhitelistedIp (ip) {
     return { type: REMOVE_WHITELISTED_IP, ip };
 };
 
-export function addMessage (message) {
-    return { type: ADD_MESSAGE, message };
-}
-
 export function setUsername (username = '') {
     return { type: SET_USERNAME, username };
 }
 
-export function getMessages () {
-    return { type: GET_MESSAGES };
+export function requestMessages () {
+    return { type: REQUEST_MESSAGES };
 }
 
+export function receiveMessages (messages) {
+    return { type: RECEIVE_MESSAGES, messages };
+}
+
+export function postingMessage () {
+    return { type: POSTING_MESSAGE };
+}
+
+export function postedMessage (message) {
+    return { type: POSTED_MESSAGE, message };
+}
+
+// Thunk action creators
 export function postMessage (message) {
-    return { type: POST_MESSAGE, message };
+    return function (dispatch) {
+        // Enter an app state of posting a message.
+        dispatch(postingMessage());
+
+        return fetch(`${serverURL}/`)
+            .then(response => response.json(),
+                // Do not use catch, because that will also catch
+                // any errors in the dispatch and resulting render,
+                // causing an loop of 'Unexpected batch number' errors.
+                // https://github.com/facebook/react/issues/6895
+                error => console.log('An error occured.', error)
+            // Enter an app state of having posted a message.
+            ).then(json => dispatch(postedMessage(json)));
+    };
+}
+
+export function getMessages () {
+    return function (dispatch) {
+        // Enter an app state of requesting messages.
+        dispatch(requestMessages());
+
+        return fetch(`${serverURL}/messages`)
+            .then(response => response.json(),
+                // Do not use catch, because that will also catch
+                // any errors in the dispatch and resulting render,
+                // causing an loop of 'Unexpected batch number' errors.
+                // https://github.com/facebook/react/issues/6895
+                error => console.log('An error occured.', error)
+            // Enter an app state of receiving messages.
+            ).then(json => dispatch(receiveMessages(json)));
+    };
 }
