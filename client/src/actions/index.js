@@ -2,11 +2,16 @@
 export const SET_MESSAGE_CONTENT = 'SET_MESSAGE_CONTENT';
 export const SET_EXPIRATION_DATE = 'SET_EXPIRATION_DATE';
 export const SET_MAXIMUM_ACCESSES = 'SET_MAXIMUM_ACCESSES';
+
 export const ADD_WHITELISTED_IP = 'ADD_WHITELISTED_IP';
 export const EDIT_WHITELISTED_IP = 'EDIT_WHITELISTED_IP';
 export const REMOVE_WHITELISTED_IP = 'REMOVE_WHITELISTED_IP';
+
 export const ADD_MESSAGE = 'ADD_MESSGE';
 export const SET_USERNAME = 'GET_USERNAME';
+
+export const GET_MESSAGES = 'GET_MESSAGES';
+export const POST_MESSAGE = 'POST_MESSAGE';
 
 // Action creators
 export function setMessageContent (content = '') {
@@ -40,4 +45,12 @@ export function addMessage (message) {
 
 export function setUsername (username = '') {
     return { type: SET_USERNAME, username };
+}
+
+export function getMessages () {
+    return { type: GET_MESSAGES };
+}
+
+export function postMessage (message) {
+    return { type: POST_MESSAGE, message };
 }
