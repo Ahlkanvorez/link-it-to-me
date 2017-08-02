@@ -1,14 +1,14 @@
 import express from 'express';
 import passport from 'passport';
 import path from 'path';
-import { messages, hash } from './database.js';
+import { messages } from './database.js';
 
 const router = express.Router();
 
 // For a good tutorial on passport.js, see:
 // - https://cloud.google.com/nodejs/getting-started/authenticate-users
-// Note: the above tutorial does not make it clear that this authentication method requires both the
-// Google+ Api and the Contacts Api be enabled.
+// Note: the above tutorial does not make it clear that this authentication
+// method requires both the Google+ Api and the Contacts Api be enabled.
 
 // Middleware that requires the user to be logged in. If the user is not logged
 // in, it will redirect the user to authorize the application and then return
@@ -23,24 +23,29 @@ const authRequired = (req, res, next) => {
 
 const addTemplateVariables = (req, res, next) => {
     res.locals.profile = req.user;
-    res.locals.login = `/auth/login?return=${encodeURIComponent(req.originalUrl)}`;
-    res.locals.logout = `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`;
+    res.locals.login =
+        `/auth/login?return=${encodeURIComponent(req.originalUrl)}`;
+    res.locals.logout =
+        `/auth/logout?return=${encodeURIComponent(req.originalUrl)}`;
     next();
 };
 
 router.get('/auth/login', (req, res, next) => {
-    // If applicable, save the URL from which the user is navigating to login, to return after logging in.
+    // If applicable, save the URL from which the user is navigating to login,
+    // to return after logging in.
     if (req.query.return) {
         req.session.oauth2return = req.query.return;
     }
     next();
-}, passport.authenticate('google', { scope: ['email', 'profile'] }));
+}, passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
 
-router.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
-    const origin = req.session.oauth2return || `/user`;
-    delete req.session.oauth2return;
-    res.redirect(origin);
-});
+router.get('/auth/google/callback', passport.authenticate('google'),
+    (req, res) => {
+        const origin = req.session.oauth2return || `/user`;
+        delete req.session.oauth2return;
+        res.redirect(origin);
+    }
+);
 
 router.get('/auth/logout', (req, res) => {
     req.logout();
@@ -48,8 +53,10 @@ router.get('/auth/logout', (req, res) => {
 });
 
 router.get('/message/:id', (req, res) => {
-    const userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    // console.log(`Ip (${userIp}) attempted to view message by id: ${req.params.id}`);
+    const userIp = req.headers['x-forwarded-for']
+        || req.connection.remoteAddress;
+    // console.log(`Ip (${userIp}) attempted to view message by id:
+    //   ${req.params.id}`);
     messages.findById(req.params.id, userIp, m => {
         if (m === 'forbidden') {
             res.render('forbidden');
@@ -85,7 +92,8 @@ router.get('/user', authRequired, addTemplateVariables, (req, res) => {
     res.sendFile(path.join(__dirname, '/../client/build/', 'index.html'));
 });
 
-// Same as the user panel, only it doesn't display a list of messages, because no one is logged in.
+// Same as the user panel, only it doesn't display a list of messages, because
+// no one is logged in.
 router.get('/guest', (req, res) => {
     res.sendFile(path.join(__dirname, '/../client/build/', 'index.html'));
 });
@@ -97,11 +105,15 @@ router.post('/', (req, res) => {
         accesses: 0,
         maxAccesses: req.body.maxAccesses || 1,
         creatorName: req.user && req.user.displayName || 'Anonymous',
-        creatorId: req.user && req.user.id || 0, // Let 0 be the ID for Anonymous users.
+        // Let 0 be the ID for Anonymous users.
+        creatorId: req.user && req.user.id || 0,
         ipWhitelist: req.body.ipWhitelist || []
     }, id => {
         if (!id) {
-            res.json({ content: 'Sorry, that message is too long; it cannot be over 3000 characters in length.' });
+            res.json({
+                content: 'Sorry, that message is too long; it cannot be over '
+                    +'3000 characters in length.'
+            });
         } else {
             res.json({
                 id,

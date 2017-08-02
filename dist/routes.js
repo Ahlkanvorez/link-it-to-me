@@ -20,8 +20,8 @@ var router = _express2.default.Router();
 
 // For a good tutorial on passport.js, see:
 // - https://cloud.google.com/nodejs/getting-started/authenticate-users
-// Note: the above tutorial does not make it clear that this authentication method requires both the
-// Google+ Api and the Contacts Api be enabled.
+// Note: the above tutorial does not make it clear that this authentication
+// method requires both the Google+ Api and the Contacts Api be enabled.
 
 // Middleware that requires the user to be logged in. If the user is not logged
 // in, it will redirect the user to authorize the application and then return
@@ -42,7 +42,8 @@ var addTemplateVariables = function addTemplateVariables(req, res, next) {
 };
 
 router.get('/auth/login', function (req, res, next) {
-    // If applicable, save the URL from which the user is navigating to login, to return after logging in.
+    // If applicable, save the URL from which the user is navigating to login,
+    // to return after logging in.
     if (req.query.return) {
         req.session.oauth2return = req.query.return;
     }
@@ -62,7 +63,8 @@ router.get('/auth/logout', function (req, res) {
 
 router.get('/message/:id', function (req, res) {
     var userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    // console.log(`Ip (${userIp}) attempted to view message by id: ${req.params.id}`);
+    // console.log(`Ip (${userIp}) attempted to view message by id:
+    //   ${req.params.id}`);
     _database.messages.findById(req.params.id, userIp, function (m) {
         if (m === 'forbidden') {
             res.render('forbidden');
@@ -98,7 +100,8 @@ router.get('/user', authRequired, addTemplateVariables, function (req, res) {
     res.sendFile(_path2.default.join(__dirname, '/../client/build/', 'index.html'));
 });
 
-// Same as the user panel, only it doesn't display a list of messages, because no one is logged in.
+// Same as the user panel, only it doesn't display a list of messages, because
+// no one is logged in.
 router.get('/guest', function (req, res) {
     res.sendFile(_path2.default.join(__dirname, '/../client/build/', 'index.html'));
 });
@@ -110,11 +113,14 @@ router.post('/', function (req, res) {
         accesses: 0,
         maxAccesses: req.body.maxAccesses || 1,
         creatorName: req.user && req.user.displayName || 'Anonymous',
-        creatorId: req.user && req.user.id || 0, // Let 0 be the ID for Anonymous users.
+        // Let 0 be the ID for Anonymous users.
+        creatorId: req.user && req.user.id || 0,
         ipWhitelist: req.body.ipWhitelist || []
     }, function (id) {
         if (!id) {
-            res.json({ content: 'Sorry, that message is too long; it cannot be over 3000 characters in length.' });
+            res.json({
+                content: 'Sorry, that message is too long; it cannot be over ' + '3000 characters in length.'
+            });
         } else {
             res.json({
                 id: id,

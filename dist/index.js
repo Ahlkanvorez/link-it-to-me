@@ -20,6 +20,10 @@ var _helmet = require('helmet');
 
 var _helmet2 = _interopRequireDefault(_helmet);
 
+var _morgan = require('morgan');
+
+var _morgan2 = _interopRequireDefault(_morgan);
+
 var _passport = require('passport');
 
 var _passport2 = _interopRequireDefault(_passport);
@@ -41,15 +45,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var app = (0, _express2.default)();
 
 app.use((0, _helmet2.default)());
+app.use((0, _morgan2.default)());
 
 // For a good tutorial on passport.js, see:
 // - https://cloud.google.com/nodejs/getting-started/authenticate-users
-// Note: the above tutorial does not make it clear that this authentication method requires both the
-// Google+ Api and the Contacts Api be enabled.
+// Note: the above tutorial does not make it clear that this authentication
+// method requires both the Google+ Api and the Contacts Api be enabled.
 
-//const GoogleStrategy = require('passport-google-oauth20').Strategy;
+// const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-// Synchronously load client id & secret from conf.json, to preserve order of initialization.
+// Synchronously load client id & secret from conf.json, to preserve order of
+// initialization.
 var conf = JSON.parse(_fs2.default.readFileSync('conf.json'));
 
 var extractProfile = function extractProfile(profile) {
@@ -123,4 +129,5 @@ app.use(function (err, req, res) {
 
 var port = 3001;
 console.log('Listening on port ' + port);
+
 module.exports = app.listen(port);

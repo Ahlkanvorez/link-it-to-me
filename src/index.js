@@ -3,6 +3,7 @@ import session from 'express-session';
 import path from 'path';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import fs from 'fs';
@@ -12,15 +13,17 @@ import { router } from './routes.js';
 const app = express();
 
 app.use(helmet());
+app.use(morgan());
 
 // For a good tutorial on passport.js, see:
 // - https://cloud.google.com/nodejs/getting-started/authenticate-users
-// Note: the above tutorial does not make it clear that this authentication method requires both the
-// Google+ Api and the Contacts Api be enabled.
+// Note: the above tutorial does not make it clear that this authentication
+// method requires both the Google+ Api and the Contacts Api be enabled.
 
-//const GoogleStrategy = require('passport-google-oauth20').Strategy;
+// const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-// Synchronously load client id & secret from conf.json, to preserve order of initialization.
+// Synchronously load client id & secret from conf.json, to preserve order of
+// initialization.
 const conf = JSON.parse(fs.readFileSync('conf.json'));
 
 const extractProfile = profile => {
@@ -94,4 +97,5 @@ app.use((err, req, res) => {
 
 const port = 3001;
 console.log(`Listening on port ${port}`);
+
 module.exports = app.listen(port);

@@ -57,7 +57,7 @@ describe('GET /auth/google/callback', function () {
                 throw err;
             }
         );
-    })
+    });
 });
 
 describe('GET /auth/logout', function () {
@@ -79,7 +79,8 @@ describe('GET /auth/logout', function () {
             .send()
             .then(function (res) {
                 expect(res).to.redirect;
-                // The redirect URL must be to the root: i.e., the domain, an optional port, then /
+                // The redirect URL must be to the root: i.e., the domain, an
+                // optional port, then /
                 expect(res.redirects[0]).to.match(/[^/]+(?::[0-9]+)?\/$/);
             }).catch(function (err) {
                 throw err;
@@ -90,13 +91,15 @@ describe('GET /auth/logout', function () {
 
 describe('GET /message/:id', function () {
     // Create two messages: one can be viewed, the other can't.
-    let accessibleMessageId, inaccessibleMessageId;
+    let accessibleMessageId;
+    let inaccessibleMessageId;
     before(function () {
         chai.request(app)
             .post('/')
             .send({
                 content: 'This is a test message.',
-                expires: new Date(Date.now() + 10 * 60 * 1000), // expires in 10 minutes
+                // expires in 10 minutes
+                expires: new Date(Date.now() + 10 * 60 * 1000),
                 maxAccesses: 1
             }).then(function (res) {
                 accessibleMessageId = res.body.id;
@@ -108,10 +111,12 @@ describe('GET /message/:id', function () {
         chai.request(app)
             .post('/')
             .send({
-                content: 'This is a test message with an IP whitelist that blocks everyone.',
-                expires: new Date(Date.now() + 10 * 60 * 1000), // expires in 10 minutes
+                content: 'This is a test message with an IP whitelist that'
+                    + 'blocks everyone.',
+                // expires in 10 minutes
+                expires: new Date(Date.now() + 10 * 60 * 1000),
                 maxAccesses: 5,
-                ipWhitelist: ['Nobody']
+                ipWhitelist: [ 'Nobody' ]
             }).then(function (res) {
                 inaccessibleMessageId = res.body.id;
             }).catch(function (err) {
@@ -138,7 +143,8 @@ describe('GET /message/:id', function () {
             .send()
             .then(function (res) {
                 expect(res).to.redirect;
-                // The redirect URL must be to the root: i.e., the domain, an optional port, then /
+                // The redirect URL must be to the root: i.e., the domain, an
+                // optional port, then /
                 expect(res.redirects[0]).to.match(/[^/]+(?::[0-9]+)?\/$/);
             }).catch(function (err) {
                 throw err;
@@ -146,7 +152,8 @@ describe('GET /message/:id', function () {
         );
     });
 
-    it('Renders a "forbidden" page when requested by an IP not on the whitelist', function () {
+    it('Renders a "forbidden" page when requested by an IP not on the'
+            + ' whitelist', function () {
         chai.request(app)
             .get(`/message/${inaccessibleMessageId}`)
             .send()
@@ -158,7 +165,8 @@ describe('GET /message/:id', function () {
         );
     });
 
-    it('Returns JSON with content and creator members for a valid id, and self-destructs on last view', function () {
+    it('Returns JSON with content and creator members for a valid id, and'
+            + ' self-destructs on last view', function () {
         chai.request(app)
             .get(`/message/${accessibleMessageId}`)
             .send()
@@ -171,7 +179,8 @@ describe('GET /message/:id', function () {
                     .send()
                     .then(function (res) {
                         expect(res).to.redirect;
-                        expect(res.redirects[0]).to.match(/[^/]+(?::[0-9]+)?\/$/);
+                        expect(res.redirects[0])
+                            .to.match(/[^/]+(?::[0-9]+)?\/$/);
                     }).catch(function (err) {
                         throw err;
                     }

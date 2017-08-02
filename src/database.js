@@ -1,4 +1,4 @@
-import mongoose, { Schema } from  'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import crypto from 'crypto';
 
 const hash = text => {
@@ -15,7 +15,7 @@ const messageSchema = new Schema({
     maxAccesses: Number,
     creatorName: String,
     creatorId: Number,
-    ipWhitelist: [String]
+    ipWhitelist: [ String ]
 });
 
 messageSchema.pre('save', function (next) {
@@ -29,17 +29,22 @@ messageSchema.pre('save', function (next) {
 const Message = mongoose.model('Message', messageSchema);
 
 const messages = (() => {
-    const isExpired = m => (m.expires <= new Date() || m.accesses >= m.maxAccesses);
+    const isExpired = m =>
+        (m.expires <= new Date()|| m.accesses >= m.maxAccesses);
 
     const deleteExpiredMessages = () => {
         Message.find({
             $or: [
                 { expires: { $lt: new Date() } },
-                { $where: function () { return this.accesses >= this.maxAccesses; } }
+                {
+                    $where: function () {
+                        return this.accesses >= this.maxAccesses;
+                    }
+                }
             ]
         }).then(messages => {
             messages.forEach(m => {
-                Message.remove({_id: m._id})
+                Message.remove({ _id: m._id })
                     .catch(err => console.error(err))
                     .then(() => console.log(`Deleted expired message: ${m}`));
             });
@@ -64,10 +69,13 @@ const messages = (() => {
             Message.find({ creatorId: id }).then(messages => {
                 messages.map(m => {
                     if (isExpired(m)) {
-                        Message.remove({ _id: m._id }).catch(err => console.error(err));
+                        Message.remove({ _id: m._id })
+                            .catch(err => console.error(err));
                     }
                 });
-                callback(messages.filter(m => !isExpired(m)).map(exposeOnlyHashedId));
+                callback(messages
+                    .filter(m => !isExpired(m))
+                    .map(exposeOnlyHashedId));
             }).catch(err => {
                 console.error(err);
                 callback();
@@ -79,13 +87,15 @@ const messages = (() => {
                 if (!message) {
                     callback();
                 } else if (isExpired(message)) {
-                    Message.remove({ _id : message._id }).catch(err => console.error(err));
+                    Message.remove({ _id: message._id })
+                        .catch(err => console.error(err));
                     callback();
                 } else {
                     if (message.ipWhitelist && message.ipWhitelist.length > 0
                             && !message.ipWhitelist.find(ip => ip === userIp)) {
-                        // If there is a non-empty whitelist, and the user requesting to view the message is not on
-                        // it, indicate they are forbidden from viewing it.
+                        // If there is a non-empty whitelist, and the user
+                        // requesting to view the message is not on it, indicate
+                        // they are forbidden from viewing it.
                         callback('forbidden');
                     } else {
                         message.accesses += 1;
@@ -103,14 +113,15 @@ const messages = (() => {
             if (!message) {
                 callback();
             } else if (message.content.length > 3000) {
-                // If the message is over 3000 characters in length, don't put it in the database.
+                // If the message is over 3000 characters in length, don't put
+                // it in the database.
                 callback();
             } else {
                 message.expires = new Date(message.expires);
                 const m = new Message(message);
                 m.save()
                     .then(message => {
-                        callback(message.hashedId)
+                        callback(message.hashedId);
                     })
                     .catch(err => console.error(err));
             }
