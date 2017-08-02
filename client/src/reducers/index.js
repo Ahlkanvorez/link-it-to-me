@@ -9,7 +9,9 @@ import {
     SET_USERNAME,
     REQUEST_MESSAGES,
     RECEIVE_MESSAGES,
-    POST_MESSAGE
+    POST_MESSAGE,
+    POSTING_MESSAGE,
+    POSTED_MESSAGE
 } from '../actions';
 
 function username (state = 'Anonymous', action) {
@@ -67,7 +69,7 @@ function ipWhitelist (state = [], action) {
     }
 };
 
-function status (state, action) {
+function status (state = {}, action) {
     switch (action.type) {
         case POSTING_MESSAGE:
             return Object.assign({}, state, {
@@ -76,7 +78,7 @@ function status (state, action) {
         case POSTED_MESSAGE:
             return Object.assign({}, state, {
                 isPosting: false,
-                id: action.message
+                id: action.id
             });
         default:
             return state;

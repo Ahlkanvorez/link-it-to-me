@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import RemovableListInput from './RemovableListInput';
 
-const EditableList = ({ elements, onChange }) => (
+const EditableList = ({ elements, onAdd, onRemove, onChange }) => (
     <table className="table">
         <thead>
         <tr>
@@ -16,7 +17,7 @@ const EditableList = ({ elements, onChange }) => (
                 <button className="btn btn-default"
                         style={{ width: '100%' }}
                         type="button"
-                        onClick={() => onChange(elements.concat('')) }>
+                        onClick={() => onAdd('') }>
                     Whitelist an IP
                 </button>
             </th>
@@ -27,14 +28,23 @@ const EditableList = ({ elements, onChange }) => (
             elements.map((e, index) => (
                 <RemovableListInput key={index}
                     value={e}
-                    onDelete={e => onChange(elements.filter(x => x !== e)) }
-                    onChange={(old, changed) => 
-                        onChange(elements.map(x => (x === old) ? changed : x))
-                    } />
+                    onDelete={onRemove}
+                    onChange={onChange} />
             ))
         }
         </tbody>
     </table>
 );
+
+EditableList.propTypes = {
+    elements: PropTypes.arrayOf(
+        PropTypes.shape({
+            ip: PropTypes.number.isRequired
+        }).isRequired
+    ),
+    onAdd: PropTypes.func.isRequired,
+    onRemove: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired
+};
 
 export default EditableList;

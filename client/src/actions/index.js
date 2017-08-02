@@ -1,7 +1,7 @@
-import fetch from 'isomorphic-fetch';
+import axios from 'axios';
 
 // TODO: Setup proper toggling of dev/production urls.
-const serverURL = 'localhost:5000';
+const serverURL = 'http://localhost:3001';
 
 // Action types
 export const SET_MESSAGE_CONTENT = 'SET_MESSAGE_CONTENT';
@@ -62,8 +62,8 @@ export function postingMessage () {
     return { type: POSTING_MESSAGE };
 }
 
-export function postedMessage (message) {
-    return { type: POSTED_MESSAGE, message };
+export function postedMessage (id) {
+    return { type: POSTED_MESSAGE, id };
 }
 
 // Thunk action creators
@@ -72,15 +72,15 @@ export function postMessage (message) {
         // Enter an app state of posting a message.
         dispatch(postingMessage());
 
-        return fetch(`${serverURL}/`)
-            .then(response => response.json(),
+        return axios.post(`${serverURL}/`, message)
+            .then(response => response.data,
                 // Do not use catch, because that will also catch
                 // any errors in the dispatch and resulting render,
                 // causing an loop of 'Unexpected batch number' errors.
                 // https://github.com/facebook/react/issues/6895
                 error => console.log('An error occured.', error)
             // Enter an app state of having posted a message.
-            ).then(json => dispatch(postedMessage(json)));
+            ).then(data => dispatch(postedMessage(data.id)));
     };
 }
 
@@ -89,14 +89,17 @@ export function getMessages () {
         // Enter an app state of requesting messages.
         dispatch(requestMessages());
 
-        return fetch(`${serverURL}/messages`)
-            .then(response => response.json(),
-                // Do not use catch, because that will also catch
-                // any errors in the dispatch and resulting render,
-                // causing an loop of 'Unexpected batch number' errors.
-                // https://github.com/facebook/react/issues/6895
-                error => console.log('An error occured.', error)
+        return axios.get(`${serverURL}/messages`)
+            .then(response => response.data,
+            // Do not use catch, because that will also catch
+            // any errors in the dispatch and resulting render,
+            // causing an loop of 'Unexpected batch number' errors.
+            // https://github.com/facebook/react/issues/6895
+            error => console.log('An error occured.', error)
             // Enter an app state of receiving messages.
-            ).then(json => dispatch(receiveMessages(json)));
+            ).then(data => {
+                dispatch(receiveMessages(data.messages, Date.now()));
+                dispatch(setUsername(data.username));
+            });
     };
 }

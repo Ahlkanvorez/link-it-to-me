@@ -25,7 +25,7 @@ const Message = ({
             <td className="text-right">Views remaining: </td>
             <td>{ Math.max(0, maxAccesses - accesses) }</td>
         </tr>
-        { ipWhitelist && (
+        { ipWhitelist && ipWhitelist.length > 0 && (
             <tr>
                 <td className="text-right">IP Whitelist: </td>
                 <td>

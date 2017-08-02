@@ -1,88 +1,69 @@
 import React from 'react';
-import axios from 'axios';
-import './react-datetime.css'
+import { connect } from 'react-redux';
+import './react-datetime.css';
+
 import MessageList from './components/MessageList';
-import MessageForm from './messageForm.js';
 import Navbar from './components/Navbar';
 import MessageLinkInfo from './components/MessageLinkInfo';
 import LoginStatusWarning from './components/LoginStatusWarning';
+import NewMessageForm from './containers/NewMessageForm';
+import { appPropType } from './types';
 
-class App extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            username: '',
-            messages: []
-        };
-
-        this.handleMessageSubmit = this.handleMessageSubmit.bind(this);
-        this.updateMessages = this.updateMessages.bind(this);
-        this.sendMessage= this.sendMessage.bind(this);
+const App = ({
+    username,
+    messages: {
+        items
+    },
+    message: {
+        content,
+        status: { id }
     }
-
-    componentDidMount () {
-        this.updateMessages();
-    }
-    
-    handleMessageSubmit (message) {
-        this.sendMessage(message);
-        this.updateMessages();
-    }
-
-    sendMessage (message) {
-        axios.post('/', message).then(res => {
-            this.setState({
-                id: res.data.id,
-                messageContent: res.data.content
-            });
-        }).catch(err => console.error(err));
-    }
-
-    updateMessages () {
-        // If already anonymous, continue anonymously.
-        if (this.state.username !== 'Anonymous') {
-            axios.get('/messages').then(res => {
-                if (res) {
-                    this.setState({
-                        username: res.data.username,
-                        messages: res.data.messages || []
-                    });
+}) => (
+    <div className="container">
+        <div className="row"
+                style={{ display: 'table', margin: '0 auto' }}>
+            <Navbar username={ username }
+                    links={[ { text: 'Logout', url: '/auth/logout' } ]} />
+        </div>
+        <div className="row" style={{ marginTop: '60px' }}>
+            <div className="col-lg-6">
+                <NewMessageForm />
+                { id && (
+                    <MessageLinkInfo id={ id }
+                        content={ items[items.length - 1].content } />
+                    )
                 }
-            }).catch(err => {
-                // If the user information cannot be gathered from the server,
-                // proceed anonymously.
-                this.setState({
-                    username: "Anonymous",
-                    messages: []
-                });
-                console.error(err)
-            });
+                <LoginStatusWarning username={ username } />
+            </div>
+            <div className="col-lg-6">
+                <MessageList messages={ items } />
+            </div>
+        </div>
+    </div>
+);
+
+App.propType = appPropType.isRequired;
+
+const mapStateToProps = ({ username, messages, message } = {
+    username: 'Anonymous',
+    messages: [],
+    message: {
+        content: '',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // tomorrow
+        maxAccesses: 1,
+        ipWhitelist: [],
+        status: {
+            isPosting: false,
+            id: undefined
         }
     }
+}) => ({
+    username,
+    messages,
+    message
+});
 
-    render () {
-        const { username, messages, id, messageContent } = this.state;
-        return (
-            <div className="container">
-                <div className="row"
-                     style={{ display: 'table', margin: '0 auto' }}>
-                    <Navbar username={ username }
-                            links={[
-                                { text: 'Logout', url: '/auth/logout' }
-                            ]} />
-                </div>
-                <div className="row" style={{ marginTop: '60px' }}>
-                    <div className="col-lg-6">
-                        <MessageForm onSubmit={ this.handleMessageSubmit } />
-                        <MessageLinkInfo id={ id }
-                                messageContent={ messageContent } />
-                        <LoginStatusWarning username={ username } />
-                    </div>
-                    <MessageList className="col-lg-6" messages={ messages } />
-                </div>
-            </div>
-        );
-    }
-}
+const MessageApp = connect(mapStateToProps)(App);
 
-export default App;
+// Using connect() implements several performance optimizations.
+export default MessageApp;
