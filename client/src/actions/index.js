@@ -100,6 +100,7 @@ export function getMessages () {
             ).then(data => {
                 dispatch(receiveMessages(data.messages, Date.now()));
                 dispatch(setUsername(data.username));
-            });
+            }
+        );
     };
 }
