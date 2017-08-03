@@ -19,7 +19,6 @@ const EditableList = ({ elements, onAdd, onRemove, onChange }) => (
                         style={{ width: '100%' }}
                         type="button"
                         onClick={() => {
-                            console.log(elements);
                             if (!elements || elements.length === 0
                                     || elements[elements.length - 1] !== '') {
                                 onAdd('');
