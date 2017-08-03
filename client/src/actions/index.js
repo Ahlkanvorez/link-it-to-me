@@ -116,7 +116,7 @@ export function getMessages () {
             // Enter an app state of receiving messages.
             ).then(data => {
                 dispatch(receiveMessages(data.messages, Date.now()));
-                
+
                 dispatch(setUsername(data.username));
             }
         );
