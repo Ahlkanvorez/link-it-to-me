@@ -108,4 +108,80 @@ describe('actions', () => {
         expect(actions.setMaximumAccesses(maxAccesses))
             .toEqual(expectedAction);
     });
+
+    it('Should create an action to add an ip to the whitelist.', () => {
+        const ip = '10.0.0.1';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to add an empty string to the whitelist if '
+    + 'given an invalid IP.', () => {
+        const ip = 'Hello, world!';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip: ''
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to add a properly formed IPv6 address to the '
+    + 'whitelist.', () => {
+        const ip = '2001:0db8:0000:0000:0000:ff00:0042:8329';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to add an IPv6 address abbreviated by '
+    + 'removing leading zeros to the whitelist.', () => {
+        const ip = '2001:db8:0:0:0:ff00:42:8329';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to add an IPv6 address abbreviated by '
+    + 'omitting segments that are all 0 to the whitelist.', () => {
+        const ip = '2001:db8::ff00:42:8329';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to add an IPv6 address abbreviated maximally '
+    + 'to ::1 to the whitelist.', () => {
+        const ip = '::1';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to add \'\' to the whitelist when given an '
+    + 'IPv6 address overly abbreviated to have :::.', () => {
+        const ip = '2001:db8:::ff00:42:8329';
+        const expectedAction = {
+            type: actions.ADD_WHITELISTED_IP,
+            ip: ''
+        };
+        expect(actions.addWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
 });

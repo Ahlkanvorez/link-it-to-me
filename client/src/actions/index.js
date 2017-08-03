@@ -44,7 +44,35 @@ export function setMaximumAccesses (maxAccesses = 1) {
     return { type: SET_MAXIMUM_ACCESSES, maxAccesses };
 };
 
+// Returns true if the provided string is a valid IPv4 or IPv6 address.
+// Note: the regex is inclusive, and allows some things that look like IP
+// addresses even if they aren't, for simplcity.
+const isValidIp = ip => (new RegExp(
+        // IPv4
+        '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$',
+        // use case-insensitive search to shorten the classes.
+        'i'
+    ).test(ip) || (new RegExp(
+        // IPv6
+        // The first segment has no leading colon and is optional
+        '^[a-z0-9]{0,4}' +
+            // The second through seventh optional segments have a leading colon
+            '(?::[a-z0-9]{0,4}){0,6}' +
+            // The last segment is not optional
+            ':[a-z0-9]{1,4}' +
+        '$',
+        // use case-insensitive search to shorten the classes.
+        'i'
+    ).test(ip) &&
+    // Exclude invalid abbreviations that result in more than two adjacent ':'.
+    !ip.includes(':::'))
+);
+
 export function addWhitelistedIp (ip) {
+    // If the provided IP is invalid, set it to the empty string.
+    if (!isValidIp(ip)) {
+        ip = '';
+    }
     return { type: ADD_WHITELISTED_IP, ip };
 };
 
