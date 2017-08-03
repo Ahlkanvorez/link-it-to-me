@@ -28,7 +28,7 @@ const App = ({
         <div className="row" style={{ marginTop: '60px' }}>
             <div className="col-lg-6">
                 <NewMessageForm />
-                { id && (
+                { id && username !== 'Anonymous' && (
                     <MessageLinkInfo id={ id }
                         content={ items[items.length - 1].content } />
                     )
