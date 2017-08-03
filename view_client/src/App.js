@@ -29,7 +29,9 @@ class ToggleableView extends Component {
                 {
                     this.state.toggle
                         ? (this.props.children)
-                        : <input type="button" onClick={() => this.handleClick()} value={this.props.toggleText} />
+                        : <input type="button"
+                                onClick={() => this.handleClick()}
+                                value={this.props.toggleText} />
                 }
             </div>
         );
@@ -52,7 +54,8 @@ const Navbar = () => (
                     Secret Message
                 </a>
             </div>
-            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div className="collapse navbar-collapse"
+                    id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav">
                     <li>
                         <a href="/auth/login">
@@ -80,10 +83,13 @@ class View extends Component {
 
     downloadMessage () {
         axios.get(`/message/${this.props.match.params.id}`)
-            .then(({data: { content, creator }}) => {
+            .then(({ data: { content, creator } }) => {
                 this.setState({
-                    content: content || "It looks like there's no message here. Maybe it already blew up, or maybe it never existed?",
-                    creator: creator || 'Huh?'});
+                    content: content
+                        || 'It looks like there\'s no message here Maybe it '
+                        + 'already blew up, or maybe it never existed?',
+                    creator: creator || 'Huh?'
+                });
             })
             .catch(err => {
                 console.error(err);
@@ -91,15 +97,18 @@ class View extends Component {
             });
     }
 
-    render() {
+    render () {
         return (
             <div className="container">
-                <div className="row" style={{ display: 'table', margin: '0 auto' }}>
+                <div className="row"
+                        style={{ display: 'table', margin: '0 auto' }}>
                     <Navbar />
                 </div>
                 <div className="row" style={{ marginTop: '60px' }}>
-                    <ToggleableView toggleText="View Message" onToggle={this.downloadMessage}>
-                        <MessageView message={this.state.content} creator={this.state.creator} />
+                    <ToggleableView toggleText="View Message"
+                            onToggle={this.downloadMessage}>
+                        <MessageView message={this.state.content}
+                                creator={this.state.creator} />
                     </ToggleableView>
                 </div>
             </div>
