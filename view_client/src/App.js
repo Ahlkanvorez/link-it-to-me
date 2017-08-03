@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import './App.css';
 
@@ -9,6 +10,11 @@ const MessageView = ({ creator, message }) => (
         <blockquote>{ message }</blockquote>
     </div>
 );
+
+MessageView.propTypes = {
+    creator: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired
+};
 
 class ToggleableView extends Component {
     constructor (props) {
@@ -24,19 +30,30 @@ class ToggleableView extends Component {
     }
 
     render () {
+        const {
+            props: { children, toggleText },
+            state: { toggle },
+            handleClick
+        } = this;
         return (
             <div className="col-lg-12">
                 {
-                    this.state.toggle
-                        ? (this.props.children)
+                    toggle
+                        ? children
                         : <input type="button"
-                                onClick={() => this.handleClick()}
-                                value={this.props.toggleText} />
+                                onClick={handleClick}
+                                value={toggleText} />
                 }
             </div>
         );
     }
 }
+
+ToggleableView.propTypes = {
+    onToggle: PropTypes.func.isRequired,
+    toggleText: PropTypes.string.isRequired,
+    children: PropTypes.any.isRequired
+};
 
 const Navbar = () => (
     <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -90,14 +107,14 @@ class View extends Component {
                         + 'already blew up, or maybe it never existed?',
                     creator: creator || 'Huh?'
                 });
-            })
-            .catch(err => {
+            }).catch(err => {
                 console.error(err);
                 alert('Something went wrong while downloading the message.');
             });
     }
 
     render () {
+        const { downloadMessage, state: { content, creator } } = this;
         return (
             <div className="container">
                 <div className="row"
@@ -106,15 +123,27 @@ class View extends Component {
                 </div>
                 <div className="row" style={{ marginTop: '60px' }}>
                     <ToggleableView toggleText="View Message"
-                            onToggle={this.downloadMessage}>
-                        <MessageView message={this.state.content}
-                                creator={this.state.creator} />
+                            onToggle={downloadMessage}>
+                        <MessageView message={content}
+                                creator={creator} />
                     </ToggleableView>
                 </div>
             </div>
         );
     }
 }
+
+View.propTypes = {
+    match: PropTypes.objectOf(
+        PropTypes.shape({
+            params: PropTypes.objectOf(
+                PropTypes.shape({
+                    id: PropTypes.string.isRequired
+                }).isRequired
+            ).isRequired
+        }).isRequired
+    ).isRequired
+};
 
 const App = () => (
     <Router>
