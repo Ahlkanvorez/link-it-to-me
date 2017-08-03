@@ -23,7 +23,7 @@ const Message = ({
         </tr>
         <tr>
             <td className="text-right">Views remaining: </td>
-            <td>{ Math.max(0, maxAccesses - accesses) }</td>
+            <td>{ Math.max(0, maxAccesses - (accesses || 0) ) }</td>
         </tr>
         { ipWhitelist && ipWhitelist.length > 0 && (
             <tr>
