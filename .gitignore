@@ -3,3 +3,4 @@
 node_modules/
 conf.json
 client/build/
+view_client/build
