@@ -9,9 +9,9 @@ import {
     SET_USERNAME,
     REQUEST_MESSAGES,
     RECEIVE_MESSAGES,
-    POST_MESSAGE,
     POSTING_MESSAGE,
-    POSTED_MESSAGE
+    POSTED_MESSAGE,
+    SET_ANONYMOUS_POSTED_MESSAGE
 } from '../actions';
 
 function username (state = 'Anonymous', action) {
@@ -34,10 +34,16 @@ function messages (state = {
                 didInvalidate: false,
                 items: action.messages
             });
-        case POST_MESSAGE:
+        case POSTING_MESSAGE:
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: true
+            });
+        case SET_ANONYMOUS_POSTED_MESSAGE:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                items: [ action.message ]
             });
         default:
             return state;

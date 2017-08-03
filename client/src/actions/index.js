@@ -16,9 +16,10 @@ export const SET_USERNAME = 'GET_USERNAME';
 
 export const REQUEST_MESSAGES = 'REQUEST_MESSAGES';
 export const RECEIVE_MESSAGES = 'RECEIVE_MESSAGES';
-export const POST_MESSAGE = 'POST_MESSAGE';
 export const POSTING_MESSAGE = 'POSTING_MESSAGE';
 export const POSTED_MESSAGE = 'POSTED_MESSAGE';
+
+export const SET_ANONYMOUS_POSTED_MESSAGE = 'SET_ANONYMOUS_POSTED_MESSAGE';
 
 // Action creators
 export function setMessageContent (content = '') {
@@ -66,6 +67,10 @@ export function postedMessage (id) {
     return { type: POSTED_MESSAGE, id };
 }
 
+export function setAnonymousPostedMessage (message) {
+    return { type: SET_ANONYMOUS_POSTED_MESSAGE, message };
+}
+
 // Thunk action creators
 export function postMessage (message) {
     return function (dispatch) {
@@ -80,7 +85,19 @@ export function postMessage (message) {
                 // https://github.com/facebook/react/issues/6895
                 error => console.log('An error occured.', error)
             // Enter an app state of having posted a message.
-            ).then(data => dispatch(postedMessage(data.id)));
+            ).then(data => {
+                // TODO: Find a better way to do this easily.
+                if (window.location.pathname === '/guest') {
+                    dispatch(setAnonymousPostedMessage(Object.assign({},
+                        message,
+                        { id: data.id }
+                    )));
+                } else {
+                    dispatch(getMessages());
+                }
+                dispatch(postedMessage(data.id));
+            }
+        );
     };
 }
 
@@ -99,8 +116,23 @@ export function getMessages () {
             // Enter an app state of receiving messages.
             ).then(data => {
                 dispatch(receiveMessages(data.messages, Date.now()));
+                
                 dispatch(setUsername(data.username));
             }
         );
+    };
+}
+
+const shouldGetMessages = ({
+    username,
+    messages: { items, didInvalidate, isFetching }
+}) => username && username !== 'Anonymous' && !isFetching
+        && (!items || didInvalidate);
+
+export function getMessagesIfNeeded (dispatch, getState) {
+    return () => {
+        return shouldGetMessages(getState())
+            ? dispatch(getMessages())
+            : Promise.resolve();
     };
 }
