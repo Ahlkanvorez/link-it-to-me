@@ -49,9 +49,11 @@ var messages = function () {
 
     var deleteExpiredMessages = function deleteExpiredMessages() {
         Message.find({
-            $or: [{ expires: { $lt: new Date() } }, { $where: function $where() {
+            $or: [{ expires: { $lt: new Date() } }, {
+                $where: function $where() {
                     return this.accesses >= this.maxAccesses;
-                } }]
+                }
+            }]
         }).then(function (messages) {
             messages.forEach(function (m) {
                 Message.remove({ _id: m._id }).catch(function (err) {
@@ -110,8 +112,9 @@ var messages = function () {
                     if (message.ipWhitelist && message.ipWhitelist.length > 0 && !message.ipWhitelist.find(function (ip) {
                         return ip === userIp;
                     })) {
-                        // If there is a non-empty whitelist, and the user requesting to view the message is not on
-                        // it, indicate they are forbidden from viewing it.
+                        // If there is a non-empty whitelist, and the user
+                        // requesting to view the message is not on it, indicate
+                        // they are forbidden from viewing it.
                         callback('forbidden');
                     } else {
                         message.accesses += 1;
@@ -131,7 +134,8 @@ var messages = function () {
             if (!message) {
                 callback();
             } else if (message.content.length > 3000) {
-                // If the message is over 3000 characters in length, don't put it in the database.
+                // If the message is over 3000 characters in length, don't put
+                // it in the database.
                 callback();
             } else {
                 message.expires = new Date(message.expires);
