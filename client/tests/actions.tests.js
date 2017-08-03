@@ -184,4 +184,8 @@ describe('actions', () => {
         expect(actions.addWhitelistedIp(ip))
             .toEqual(expectedAction);
     });
+
+    // TODO: Test the remaining action creators.
+
+    // TODO: Test the thunk action creators.
 });
