@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const linksPropType = PropTypes.arrayOf(
+    PropTypes.shape([
+        PropTypes.string
+    ]).isRequired
+).isRequired;
+
 const NavbarToggleButton = () => (
     <button type="button" className="navbar-toggle"
             data-toggle="collapse"
@@ -43,11 +49,7 @@ const NavbarLinks = ({ links = [] }) => (
 );
 
 NavbarLinks.propTypes = {
-    links: PropTypes.arrayOf(
-        PropTypes.shape([
-            PropTypes.string
-        ]).isRequired
-    ).isRequired
+    links: linksPropType.isRequired
 };
 
 const Navbar = ({ username, links }) => (
@@ -61,11 +63,7 @@ const Navbar = ({ username, links }) => (
 
 Navbar.propTypes = {
     username: PropTypes.string,
-    links: PropTypes.arrayOf(
-        PropTypes.shape([
-            PropTypes.string
-        ]).isRequired
-    ).isRequired
+    links: linksPropType.isRequired
 };
 
 export default Navbar;

@@ -10,7 +10,8 @@ const RemovableListInput = ({ value, onChange, onDelete }) => (
                     onChange={e => {
                         e.preventDefault();
                         onChange(value, e.target.value);
-                    }} />
+                    }}
+                    required />
         </td>
         <td>
             <button className="btn btn-default"

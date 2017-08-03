@@ -13,7 +13,7 @@ export const ipWhitelistPropType = PropTypes.arrayOf(
 
 export const messagePropType = PropTypes.objectOf(
     PropTypes.shape({
-        content: PropTypes.instanceOf(String),
+        content: PropTypes.string,
         expires: PropTypes.instanceOf(Date).isRequired,
         maxAccesses: PropTypes.number.isRequired,
         ipWhitelist: ipWhitelistPropType.isRequired,

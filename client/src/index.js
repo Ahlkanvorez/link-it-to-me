@@ -31,7 +31,7 @@ if (window.location.pathname !== '/guest') {
 
     // Refresh every 5 minutes.
     const { dispatch, getState } = store;
-    setTimeout(getMessagesIfNeeded(dispatch, getState), 1000 * 60 * 1);
+    setTimeout(getMessagesIfNeeded(dispatch, getState), 1000 * 60 * 5);
 }
 
 ReactDOM.render(

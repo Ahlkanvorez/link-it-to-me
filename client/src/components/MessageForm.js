@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import EditableList from './EditableList';
 import DateTime from 'react-datetime';
+import { messagePropType } from '../types';
 
 const MessageForm = ({
     message: {
@@ -27,7 +28,8 @@ const MessageForm = ({
                             className="form-control"
                             style={{ width: '100%' }}
                             onChange={onContentChange}
-                            placeholder="Secure message" />
+                            placeholder="Secure message"
+                            required />
                 <br />
                 <label>
                     Self-destruct on
@@ -40,8 +42,9 @@ const MessageForm = ({
                     <DateTime value={expires}
                                 onChange={onExpiresChange}
                                 isValidDate={
-                                    date => date.isAfter(new Date())
-                                } />
+                                    date => date.isAfter(Date.now())
+                                }
+                                required />
                 </span>
                 <label>
                     or after
@@ -57,7 +60,8 @@ const MessageForm = ({
                                 marginRight: '0.5em'
                             } }
                             value={maxAccesses}
-                            onChange={onMaxAccessesChange} />
+                            onChange={onMaxAccessesChange}
+                            required />
                     {   // Use the appropriately noun for the selected value.
                         maxAccesses === '1' ? 'access' : 'accesses'
                     }.
@@ -83,18 +87,7 @@ const MessageForm = ({
 );
 
 MessageForm.propTypes = {
-    message: PropTypes.objectOf(
-        PropTypes.shape({
-            content: PropTypes.string.isRequired,
-            expires: PropTypes.instanceOf(Date).isRequired,
-            maxAccesses: PropTypes.number.isRequired,
-            ipWhitelist: PropTypes.arrayOf(
-                PropTypes.shape([
-                    PropTypes.string
-                ])
-            ).isRequired
-        }).isRequired
-    ).isRequired,
+    message: messagePropType.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onContentChange: PropTypes.func.isRequired,
     onExpiresChange: PropTypes.func.isRequired,

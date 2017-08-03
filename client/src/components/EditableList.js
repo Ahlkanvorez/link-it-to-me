@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ipWhitelistPropType } from '../types';
 import RemovableListInput from './RemovableListInput';
 
 const EditableList = ({ elements, onAdd, onRemove, onChange }) => (
@@ -17,7 +18,13 @@ const EditableList = ({ elements, onAdd, onRemove, onChange }) => (
                 <button className="btn btn-default"
                         style={{ width: '100%' }}
                         type="button"
-                        onClick={() => onAdd('') }>
+                        onClick={() => {
+                            console.log(elements);
+                            if (!elements || elements.length === 0
+                                    || elements[elements.length - 1] !== '') {
+                                onAdd('');
+                            }
+                         } }>
                     Whitelist an IP
                 </button>
             </th>
@@ -37,11 +44,7 @@ const EditableList = ({ elements, onAdd, onRemove, onChange }) => (
 );
 
 EditableList.propTypes = {
-    elements: PropTypes.arrayOf(
-        PropTypes.shape({
-            ip: PropTypes.number.isRequired
-        }).isRequired
-    ),
+    elements: ipWhitelistPropType.isRequired,
     onAdd: PropTypes.func.isRequired,
     onRemove: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired

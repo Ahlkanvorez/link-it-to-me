@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Message from './Message';
+import { messagesPropType } from '../types';
 
 const MessageList = ({ messages }) => (
     (messages && messages.length > 0) && (
@@ -20,20 +20,7 @@ const MessageList = ({ messages }) => (
 );
 
 MessageList.propTypes = {
-    messages: PropTypes.arrayOf(
-        PropTypes.objectOf(
-            PropTypes.shape({
-                content: PropTypes.string.isRequired,
-                expires: PropTypes.instanceOf(Date).isRequired,
-                maxAccesses: PropTypes.number.isRequired,
-                ipWhitelist: PropTypes.arrayOf(
-                    PropTypes.shape([
-                        PropTypes.string
-                    ]).isRequired
-                ).isRequired
-            }).isRequired
-        ).isRequired
-    ).isRequired
+    messages: messagesPropType.isRequired
 };
 
 export default MessageList;

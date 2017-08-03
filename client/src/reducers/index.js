@@ -65,7 +65,16 @@ function maxAccesses (state = 1, action) {
 function ipWhitelist (state = [], action) {
     switch (action.type) {
         case ADD_WHITELISTED_IP:
-            return state.concat(action.ip);
+            // Ensure the IP list never has duplicate values, and preserve the
+            // order in which the user inputted them.
+            const ipSet = {};
+            return state.concat(action.ip).reduce((distinct, val) => {
+                if (ipSet[val]) {
+                    return distinct;
+                }
+                ipSet[val] = true;
+                return distinct.concat(val);
+            }, []);
         case EDIT_WHITELISTED_IP:
             return state.map(ip => (ip === action.oldIp) ? action.newIp : ip);
         case REMOVE_WHITELISTED_IP:

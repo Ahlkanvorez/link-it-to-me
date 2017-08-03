@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
+import { messagePropType } from '../types';
 
 const Message = ({
     value: {
@@ -40,18 +40,7 @@ const Message = ({
 );
 
 Message.propTypes = {
-    value: PropTypes.objectOf(
-        PropTypes.shape({
-            content: PropTypes.string.isRequired,
-            expires: PropTypes.instanceOf(Date).isRequired,
-            maxAccesses: PropTypes.number.isRequired,
-            ipWhitelist: PropTypes.arrayOf(
-                PropTypes.shape({
-                    ip: PropTypes.string.isRequired
-                })
-            ).isRequired
-        }).isRequired
-    ).isRequired
+    value: messagePropType.isRequired
 };
 
 export default Message;

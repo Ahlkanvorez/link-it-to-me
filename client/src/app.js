@@ -9,7 +9,6 @@ import LoginStatusWarning from './components/LoginStatusWarning';
 import NewMessageForm from './containers/NewMessageForm';
 import { appPropType } from './types';
 
-// TODO: Complete prop validation.
 const App = ({
     username,
     messages: {
