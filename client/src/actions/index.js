@@ -115,7 +115,10 @@ export function getMessages () {
             error => console.log('An error occured.', error)
             // Enter an app state of receiving messages.
             ).then(data => {
-                dispatch(receiveMessages(data.messages, Date.now()));
+                // Messages come from the server [ oldest, ..., newest ].
+                // Reversing the messages makes them display more intuitively
+                //  [ newest, ..., oldest ].
+                dispatch(receiveMessages(data.messages.reverse(), Date.now()));
 
                 dispatch(setUsername(data.username));
             }
