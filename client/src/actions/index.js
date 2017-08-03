@@ -28,10 +28,19 @@ export function setMessageContent (content = '') {
 
 const tomorrow = () => new Date(Date.now() + 1000 * 60 * 60 * 24);
 export function setExpirationDate (expirationDate = tomorrow()) {
+    // Prevent past dates from being used.
+    if (expirationDate < Date.now()) {
+        expirationDate = tomorrow();
+    }
     return { type: SET_EXPIRATION_DATE, expirationDate };
 };
 
 export function setMaximumAccesses (maxAccesses = 1) {
+    // Ensure the result is an integer.
+    maxAccesses = Math.floor(maxAccesses);
+    if (maxAccesses < 1) {
+        maxAccesses = 1;
+    }
     return { type: SET_MAXIMUM_ACCESSES, maxAccesses };
 };
 
