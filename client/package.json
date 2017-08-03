@@ -6,6 +6,7 @@
     "axios": "^0.16.2",
     "babel-polyfill": "^6.23.0",
     "moment": "^2.18.1",
+    "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-datetime": "^2.8.10",
     "react-dom": "^15.6.1",
@@ -13,14 +14,20 @@
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0",
-    "prop-types": "^15.5.10"
+    "redux-thunk": "^2.2.0"
   },
   "scripts": {
     "build": "react-scripts build",
-    "start": "react-scripts start"
+    "start": "react-scripts start",
+    "test": "jest",
+    "test:watch": "npm test -- --watch"
   },
   "devDependencies": {
+    "babel-jest": "^20.0.3",
+    "jest": "^20.0.4",
     "react-scripts": "^1.0.10"
+  },
+  "jest": {
+    "testRegex": "\\.tests\\.js"
   }
 }
