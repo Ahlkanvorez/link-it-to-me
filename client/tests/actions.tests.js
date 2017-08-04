@@ -185,6 +185,112 @@ describe('actions', () => {
             .toEqual(expectedAction);
     });
 
+    it('Should create an action to replace one IP with another.', () => {
+        const oldIp = '10.0.0.1';
+        const newIp = '10.0.0.8';
+        const expectedAction = {
+            type: actions.EDIT_WHITELISTED_IP,
+            oldIp,
+            newIp
+        };
+        expect(actions.editWhitelistedIp(oldIp, newIp))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to replace an old IP with the empty string if '
+    + 'not provided a new IP.', () => {
+        const oldIp = '10.0.0.1';
+        const expectedAction = {
+            type: actions.EDIT_WHITELISTED_IP,
+            oldIp,
+            newIp: ''
+        };
+        expect(actions.editWhitelistedIp(oldIp))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to replace an old IP with the new IP even if '
+    + 'not provided a valid new IP.', () => {
+        const oldIp = '10.0.0.1';
+        const newIp = 'Hello, World!';
+        const expectedAction = {
+            type: actions.EDIT_WHITELISTED_IP,
+            oldIp,
+            newIp
+        };
+        expect(actions.editWhitelistedIp(oldIp, newIp))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to remove a whiltelisted IP.', () => {
+        const ip = '10.0.0.1';
+        const expectedAction = {
+            type: actions.REMOVE_WHITELISTED_IP,
+            ip
+        };
+        expect(actions.removeWhitelistedIp(ip))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to remove the empty string from the '
+    + 'whitelist if not given an IP.', () => {
+        const expectedAction = {
+            type: actions.REMOVE_WHITELISTED_IP,
+            ip: ''
+        };
+        expect(actions.removeWhitelistedIp())
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to set the username.', () => {
+        const username = 'User';
+        const expectedAction = {
+            type: actions.SET_USERNAME,
+            username
+        };
+        expect(actions.setUsername(username))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to set the username to \'Anonymous\' '
+    + 'if not provided a username.', () => {
+        const expectedAction = {
+            type: actions.SET_USERNAME,
+            username: 'Anonymous'
+        };
+        expect(actions.setUsername())
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to request messages.', () => {
+        const expectedAction = {
+            type: actions.REQUEST_MESSAGES
+        };
+        expect(actions.requestMessages())
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to receive messages.', () => {
+        const messages = [ 'a', 'b', 'c' ];
+        const expectedAction = {
+            type: actions.RECEIVE_MESSAGES,
+            messages
+        };
+        expect(actions.receiveMessages(messages))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to receive messages, with the value of '
+    + 'the empty list if not provided an argument.', () => {
+        const expectedAction = {
+            type: actions.RECEIVE_MESSAGES,
+            messages: []
+        };
+        expect(actions.receiveMessages())
+            .toEqual(expectedAction);
+    });
+
+
     // TODO: Test the remaining action creators.
 
     // TODO: Test the thunk action creators.

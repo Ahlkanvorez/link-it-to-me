@@ -76,15 +76,15 @@ export function addWhitelistedIp (ip) {
     return { type: ADD_WHITELISTED_IP, ip };
 };
 
-export function editWhitelistedIp (oldIp, newIp) {
+export function editWhitelistedIp (oldIp, newIp = '') {
     return { type: EDIT_WHITELISTED_IP, oldIp, newIp };
 };
 
-export function removeWhitelistedIp (ip) {
+export function removeWhitelistedIp (ip = '') {
     return { type: REMOVE_WHITELISTED_IP, ip };
 };
 
-export function setUsername (username = '') {
+export function setUsername (username = 'Anonymous') {
     return { type: SET_USERNAME, username };
 }
 
@@ -92,7 +92,7 @@ export function requestMessages () {
     return { type: REQUEST_MESSAGES };
 }
 
-export function receiveMessages (messages) {
+export function receiveMessages (messages = []) {
     return { type: RECEIVE_MESSAGES, messages };
 }
 
