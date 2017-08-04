@@ -290,8 +290,34 @@ describe('actions', () => {
             .toEqual(expectedAction);
     });
 
+    it('Should create an action indicating a state "posting a message"', () => {
+        const expectedAction = {
+            type: actions.POSTING_MESSAGE
+        };
+        expect(actions.postingMessage())
+            .toEqual(expectedAction);
+    });
 
-    // TODO: Test the remaining action creators.
+    it('Should create an action to indicate a state of having posted '
+    + 'a message with a provided ID.', () => {
+        const id = '123abc';
+        const expectedAction = {
+            type: actions.POSTED_MESSAGE,
+            id
+        };
+        expect(actions.postedMessage(id))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to set a message as posted anonymously', () => {
+        const message = { hello: 'world' };
+        const expectedAction = {
+            type: actions.SET_ANONYMOUS_POSTED_MESSAGE,
+            message
+        };
+        expect(actions.setAnonymousPostedMessage(message))
+            .toEqual(expectedAction);
+    });
 
     // TODO: Test the thunk action creators.
 });
