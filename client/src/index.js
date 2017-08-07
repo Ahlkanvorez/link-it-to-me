@@ -15,7 +15,6 @@ import {
     setExpirationDate,
     getMessagesIfNeeded
 } from './actions';
-import './styles.css';
 
 const store = createStore(
     messageApp,
