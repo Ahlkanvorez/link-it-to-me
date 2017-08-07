@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import EditableList from './EditableList';
 import DateTime from 'react-datetime';
 import { messagePropType } from '../types';
+import { validIpPattern } from '../actions';
 
 const MessageForm = ({
     message: {
@@ -67,17 +68,11 @@ const MessageForm = ({
                     }.
                 </label>
                 <br />
-                { /* TODO: Make this automatic. */ }
-                <p>
-                    If you would like to add an IPv4 address to the
-                    whitelist, prefix the address with
-                    &quot;::ffff:&quot; to convert it to an IPv6
-                    address.
-                </p>
                 <EditableList elements={ipWhitelist}
                         onAdd={onAddIp}
                         onRemove={onRemoveIp}
-                        onChange={onEditIp} />
+                        onChange={onEditIp}
+                        pattern={validIpPattern} />
             </fieldset>
             <input type="submit"
                     className="form-control"

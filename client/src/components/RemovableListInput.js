@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const RemovableListInput = ({ value, onChange, onDelete }) => (
+const RemovableListInput = ({ value, onChange, onDelete, pattern }) => (
     <tr>
         <td>
-            <input type="text"
-                    className="form-control"
-                    value={value}
-                    onChange={e => {
-                        e.preventDefault();
-                        onChange(value, e.target.value);
-                    }}
-                    required />
+            <input value={value}
+                className="form-control"
+                type="text"
+                data-tip="Enter a Valid IP Address"
+                title="A valid IP Address"
+                pattern={pattern}
+                onChange={e => {
+                    e.preventDefault();
+                    onChange(value, e.target.value);
+                }}
+                required />
         </td>
         <td>
             <button className="btn btn-default"
@@ -27,7 +30,8 @@ const RemovableListInput = ({ value, onChange, onDelete }) => (
 RemovableListInput.propTypes = {
     value: PropTypes.any.isRequired,
     onChange: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired
+    onDelete: PropTypes.func.isRequired,
+    pattern: PropTypes.string.isRequired
 };
 
 export default RemovableListInput;
