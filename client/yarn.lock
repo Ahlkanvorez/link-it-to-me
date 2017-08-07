@@ -5149,6 +5149,10 @@ react@^15.6.1:
     object-assign "^4.1.0"
     prop-types "^15.5.10"
 
+reactjs-mappletooltip@^1.4.63:
+  version "1.4.63"
+  resolved "https://registry.yarnpkg.com/reactjs-mappletooltip/-/reactjs-mappletooltip-1.4.63.tgz#71ec049763aa5eb1725fafdd98d6dcb63bf2c936"
+
 read-all-stream@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/read-all-stream/-/read-all-stream-3.1.0.tgz#35c3e177f2078ef789ee4bfafa4373074eaef4fa"
