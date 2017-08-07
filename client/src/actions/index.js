@@ -47,7 +47,8 @@ export function setMaximumAccesses (maxAccesses = 1) {
 // Returns true if the provided string is a valid IPv4 or IPv6 address.
 // Note: the regex is inclusive, and allows some things that look like IP
 // addresses even if they aren't, for simplcity.
-export const iPv4 = '(?:^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$)';
+const iPv4WithoutEndings = '(?:[0-9]{1,3}\.){3}[0-9]{1,3}';
+export const iPv4 = `(?:^${iPv4WithoutEndings}$)`;
 export const iPv6 = ''
     // The IP cannot contain :::, so lookahead after each group and ensure it
     // doesn't appear.
@@ -58,7 +59,10 @@ export const iPv6 = ''
     + '(?::[a-zA-Z0-9]{0,4}(?!:::)){0,6}'
     // The last segment is not optional
     + ':[a-zA-Z0-9]{1,4}'
-+ '$)';
++ '$)'
++ '|'
+    // Alternatively, an IPv6 address can be an IPv4 address prefixed by ::ffff:
++ `(?:^::ffff:${iPv4WithoutEndings}$)`;
 export const validIpPattern = `${iPv4}|${iPv6}`;
 export const isValidIp = (() => {
     const ipPattern = new RegExp(validIpPattern);
