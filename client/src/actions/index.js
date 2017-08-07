@@ -47,36 +47,47 @@ export function setMaximumAccesses (maxAccesses = 1) {
 // Returns true if the provided string is a valid IPv4 or IPv6 address.
 // Note: the regex is inclusive, and allows some things that look like IP
 // addresses even if they aren't, for simplcity.
-const isValidIp = ip => (new RegExp(
-        // IPv4
-        '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$',
-        // use case-insensitive search to shorten the classes.
-        'i'
-    ).test(ip) || (new RegExp(
-        // IPv6
-        // The first segment has no leading colon and is optional
-        '^[a-z0-9]{0,4}' +
-            // The second through seventh optional segments have a leading colon
-            '(?::[a-z0-9]{0,4}){0,6}' +
-            // The last segment is not optional
-            ':[a-z0-9]{1,4}' +
-        '$',
-        // use case-insensitive search to shorten the classes.
-        'i'
-    ).test(ip) &&
-    // Exclude invalid abbreviations that result in more than two adjacent ':'.
-    !ip.includes(':::'))
-);
+export const iPv4 = '(?:^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$)';
+export const iPv6 = ''
+    // The IP cannot contain :::, so lookahead after each group and ensure it
+    // doesn't appear.
++ '(?:^(?!:::)'
+    // The first segment has no leading colon and is optional
+    + '[a-zA-Z0-9]{0,4}(?!:::)'
+    // The second through seventh optional segments have a leading colon
+    + '(?::[a-zA-Z0-9]{0,4}(?!:::)){0,6}'
+    // The last segment is not optional
+    + ':[a-zA-Z0-9]{1,4}'
++ '$)';
+export const validIpPattern = `${iPv4}|${iPv6}`;
+export const isValidIp = (() => {
+    const ipPattern = new RegExp(validIpPattern);
+    return ip => ipPattern.test(ip);
+})();
+export const isIPv4 = (() => {
+    const iPv4Pattern = new RegExp(iPv4);
+    return ip => iPv4Pattern.test(ip);
+})();
+
+export const convertIPv4ToIPv6 = ip => `::ffff:${ip}`;
 
 export function addWhitelistedIp (ip) {
     // If the provided IP is invalid, set it to the empty string.
     if (!isValidIp(ip)) {
         ip = '';
     }
+    // If an IPv4 address is given, convert it to IPv6.
+    if (isIPv4(ip)) {
+        ip = convertIPv4ToIPv6(ip);
+    }
     return { type: ADD_WHITELISTED_IP, ip };
 };
 
 export function editWhitelistedIp (oldIp, newIp = '') {
+    // If an IPv4 address is given, convert it to IPv6.
+    if (isIPv4(newIp)) {
+        newIp = convertIPv4ToIPv6(newIp);
+    }
     return { type: EDIT_WHITELISTED_IP, oldIp, newIp };
 };
 

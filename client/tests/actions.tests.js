@@ -1,6 +1,16 @@
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import nock from 'nock';
 import * as actions from '../src/actions';
 
+const middlewares = [ thunk ];
+const mockStore = configureMockStore(middlewares);
+
 describe('actions', () => {
+    afterEach(() => {
+        nock.cleanAll();
+    });
+
     it('Should create an action to set the message content', () => {
         const content = 'This is some message content';
         const expectedAction = {
@@ -109,11 +119,12 @@ describe('actions', () => {
             .toEqual(expectedAction);
     });
 
-    it('Should create an action to add an ip to the whitelist.', () => {
+    it('Should create an action to add an IPv4 address to the whitelist as an '
+    + 'IPv6 address.', () => {
         const ip = '10.0.0.1';
         const expectedAction = {
             type: actions.ADD_WHITELISTED_IP,
-            ip
+            ip: `::ffff:${ip}`
         };
         expect(actions.addWhitelistedIp(ip))
             .toEqual(expectedAction);
@@ -186,12 +197,25 @@ describe('actions', () => {
     });
 
     it('Should create an action to replace one IP with another.', () => {
-        const oldIp = '10.0.0.1';
-        const newIp = '10.0.0.8';
+        const oldIp = '2001:db8:::ff00:42:8329';
+        const newIp = '2001:db8:::ff00:42:8330';
         const expectedAction = {
             type: actions.EDIT_WHITELISTED_IP,
             oldIp,
             newIp
+        };
+        expect(actions.editWhitelistedIp(oldIp, newIp))
+            .toEqual(expectedAction);
+    });
+
+    it('Should create an action to replace an IP with an IPv6 address when '
+    + 'given an IPv4 address.', () => {
+        const oldIp = '2001:db8:::ff00:42:8329';
+        const newIp = '10.0.0.1';
+        const expectedAction = {
+            type: actions.EDIT_WHITELISTED_IP,
+            oldIp,
+            newIp: `::ffff:${newIp}`
         };
         expect(actions.editWhitelistedIp(oldIp, newIp))
             .toEqual(expectedAction);
@@ -318,6 +342,43 @@ describe('actions', () => {
         expect(actions.setAnonymousPostedMessage(message))
             .toEqual(expectedAction);
     });
+
+    it('Should return a function', () => {
+        expect(typeof actions.postMessage())
+            .toEqual('function');
+    });
+
+    /*
+    it('Should return a function which dispatches a POSTING_MESSAGE action, '
+    + 'sends an HTTP POST request to http://localhost:3001/, '
+    + 'then dispatches a POSTED_MESSAGE action.', () => {
+        const message = {
+            id: 'testID',
+            content: 'testContent'
+        };
+        nock('http://localhost:3001/')
+            .post('/')
+            .reply(201, {
+                data: {
+                    messages: [ message ],
+                    username: 'User'
+                }
+            }
+        );
+
+        const expectedActions = [
+            { type: actions.POSTING_MESSAGE },
+            { type: actions.POSTED_MESSAGE, id: 'testID' }
+        ];
+
+        const store = mockStore({ messages: [], username: '' });
+
+        return store.dispatch(actions.postMessage(message))
+            .then(() => {
+                expect(store.getActions()).toEqual(expectedActions);
+            });
+    });
+        */
 
     // TODO: Test the thunk action creators.
 });

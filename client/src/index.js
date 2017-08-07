@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
+
 import MessageApp from './app';
 import registerServiceWorker from './registerServiceWorker';
 import messageApp from './reducers';
@@ -14,6 +15,7 @@ import {
     setExpirationDate,
     getMessagesIfNeeded
 } from './actions';
+import './styles.css';
 
 const store = createStore(
     messageApp,

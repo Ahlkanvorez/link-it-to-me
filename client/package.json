@@ -10,8 +10,10 @@
     "react": "^15.6.1",
     "react-datetime": "^2.8.10",
     "react-dom": "^15.6.1",
+    "react-icons-kit": "^1.0.7",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
+    "react-tooltip": "^3.3.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0"
@@ -25,7 +27,9 @@
   "devDependencies": {
     "babel-jest": "^20.0.3",
     "jest": "^20.0.4",
-    "react-scripts": "^1.0.10"
+    "nock": "^9.0.14",
+    "react-scripts": "^1.0.10",
+    "redux-mock-store": "^1.2.3"
   },
   "jest": {
     "testRegex": "\\.tests\\.js"
