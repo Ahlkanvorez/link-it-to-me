@@ -31,6 +31,7 @@
   },
   "scripts": {
     "test": "mocha",
+    "prebuild": "cd client/ && npm install && npm run build; cd ../view_client && npm install && npm run build; cd ..",
     "build": "babel src/ -d dist/",
     "start": "pm2 start dist/index.js"
   }
